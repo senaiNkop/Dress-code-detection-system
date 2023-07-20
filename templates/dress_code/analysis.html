@@ -1,0 +1,87 @@
+{% extends 'dress_code/index.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block content %}
+    <section class="tab-components">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title mb-30">
+                  <h2>Analyze Image</h2>
+                </div>
+
+                {% if error %}
+                    <div id="dismiss_notification" class="col-12 mb-0 alert alert-danger" role="alert">
+                        <h5 class="alert-heading">Error</h5>
+                        <p>{{ error }}</p>
+                        <hr>
+                        <p class="mb-0">Click this message to dismiss</p>
+                    </div>
+                    <br>
+                {% endif %}
+
+                {% if success %}
+                    <div id="dismiss_notification" class="col-12 mb-0 alert alert-success" role="alert">
+                        <h5 class="alert-heading">Well done {{ user.username }}!</h5>
+                        <p>{{ success }}</p>
+                        <hr>
+                        <p class="mb-0">Click this message to dismiss</p>
+                    </div>
+                    <br>
+                {% endif %}
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="{% url 'senai' %}">Senai</a>
+                      </li>
+                      <li class="breadcrumb-item"><a href="{% url 'dress-code:homepage' %}">Dashboard</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Data Collection
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="container">
+
+                        <div class="card-style mb-5">
+                            <form method="post">
+                                <div class="mb-3">
+                                    <label class="form-label" for="customFile">Upload</label>
+                                    <input type="file" class="form-control" id="customFile">
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    
+                    
+                </div>
+
+                <div class="col-md-8">
+                    <div>
+                        <img src="#" id="analyzed_image_display" alt="Your analyzed will appear here">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

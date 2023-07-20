@@ -1,0 +1,104 @@
+{% extends 'dress_code/index.html' %}
+
+{% block content %}
+      <!-- ========== section start ========== -->
+    <section>
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <div class="title d-flex align-items-center flex-wrap mb-30">
+                  <h2 class="mr-40">Automatic Dress Code Detection System</h2>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-md-4">
+                <div class="breadcrumb-wrapper mb-30">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="{% url 'dress-code:homepage' %}">Dashboard</a>
+                      </li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        About
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <!-- Invoice Wrapper Start -->
+          <div class="invoice-wrapper">
+            <div class="row">
+              <div class="col-12">
+                <div class="invoice-card card-style mb-30">
+                  <div class="invoice-header">
+                    <div class="invoice-for" style="text-align: justify">
+                      <h2 class="mb-10">A Final Year Project</h2>
+                      <p class="text-sm mb-4">
+                          This project aims to develop a clothing monitoring system that will help
+                          students dress appropriately in accordance with their institution's dress
+                          code. This software will be an essential tool in ensuring that students
+                          dress appropriately and maintain high standards of decency in their attire.
+                          The system will be designed to provide feedback to students on their
+                          clothing choice, ensuring they dress within the boundaries of what is
+                          acceptable in their institution.
+                      </p>
+                      <p class="text-sm mb-4">
+                          As a final year project, this research is expected to contribute to the
+                          existing body of knowledge on computer vision and deep learning. The
+                          development of this system requires a significant amount of data collection,
+                          image annotation, and training of the machine learning model, which may be a
+                          challenging task for an individual student. Therefore, the assistance of the
+                          public is highly appreciated in collecting images and annotating them for
+                          training purposes.
+                      </p>
+
+                      <p class="text-sm mb-4">
+                          Moreover, the development of this system requires financial resources to
+                          cover the cost of acquiring the necessary hardware, software, and other
+                          resources required for the project. Any form of financial assistance is
+                          highly welcomed to facilitate the development of this innovative system.
+                      </p>
+
+                      <p class="text-sm mb-4">
+                          This project aims to promote student compliance with dress codes, and
+                          this will ultimately lead to a positive impact on the educational environment.
+                          The successful completion of this project will provide a practical solution
+                          to an existing problem, thus making life easier for both students and educators
+                          alike.
+                      </p>
+                      <p class="text-sm mb-4">
+                          We are confident that with the support of the community, we will be able to
+                          achieve our goals and make a significant impact on the lives of students
+                          in educational institutions. We thank you in advance for your support and
+                          look forward to working together towards a better future.
+                      </p>
+                    </div>
+                  </div>
+                  <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="senai.nkop" data-color="#5F7FFF" data-emoji=""  data-font="Lato" data-text="Join in!" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
+
+                  <div class="note-wrapper warning-alert py-4 px-sm-3 px-lg-5">
+                  </div>
+                </div>
+                <!-- End Card -->
+              </div>
+              <!-- ENd Col -->
+            </div>
+            <!-- End Row -->
+          </div>
+          <!-- Invoice Wrapper End -->
+        </div>
+    <!-- end container -->
+    </section>
+      <!-- ========== section end ========== -->
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

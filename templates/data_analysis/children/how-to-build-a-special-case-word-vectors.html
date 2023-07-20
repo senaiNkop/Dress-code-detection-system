@@ -1,0 +1,250 @@
+{% extends 'data_analysis/index.html' %}
+{% load static %}
+
+{% block tags %}
+    <h2 style="margin-right: 10px;">Data Science</h2>
+    <h2 style="margin-right: 10px;">NLP</h2>
+    <h2 style="margin-right: 10px;">Word Vector</h2>
+{% endblock tags %}
+
+{% block post %}
+    <p>
+        Using pretrained word vectors are all good and fine and are of huge benefit to your models,
+        for example the Google word2vec contains 3 million unique words (vocabulary) that were trained
+        on billions of texts. Those word vectors are amazingly finetuned and represent the semantic
+        meaning of a words to an extremely high accuracy. I mean they are state-ofthe-art, why should
+        we think of ever building our own word vectors?<br><br>
+
+        Visualize this scenario
+    </p>
+
+    <p class="quotation block_text">
+        You are a hardcore fantasy fan and their are these particular novel series [Malazan book of the Fallen],
+        you and your fellow hardcore friends are so crazy about, you all can’t wait to express your emotions to the author
+        [Steven Erikson] about how you all feel about the books. <br><br>In a classic bid to impress your other
+        hardcore fans and show that you are the book number one fan, you decided to build a sentimental model,
+        that will be able to analyze their reviews and accurately recognize their state of emotion, and then
+        translate it into five succinct word (Very Good, Good, Ok, Bad, Very Bad).<br><br>
+
+        In your enthusiasm you decided to use google word2vec (I mean it has 3 million words), then you
+        discovered a very obvious error. You and your fellow hardcore fans use words a lot in your reviews
+        that are not found in the google word2vec 3 million vocabulary (what!!! but the book was writen in
+        English), words like Bugg, Gothos, Seguleh etc, (I guess the over 1 billion texts that google word2vec
+        was trained on didn’t, contain those words). <br><br>
+        Even with those cryptic words containing rich sentimental values (e.g. Hood’s breaths may means wow,
+        amazing, shock etc. depending on the context), you still think you would be able to build a fairly accurate
+        model with the remaining words that can be found in the google word2vec vocabulary.
+
+        Bolster by that insight, you went ahead with building your model. With further analysis, you then discovered
+        an error of the most insidious kind, the kind that are extremely hard to detect because they do not trip any
+        alarm (silent or loud). They pass so silently most times you do not notice them until it is very late, and the
+        damage they deal is so extreme, that they have huge impact on the performance of your model. <br><br>
+
+        Ok enough with trying to scare you, but which kind of error are these? They are in this NLP context what
+        I will call the <em><b>misconcepted errors</b></em>, they occur as a result of when the meaning of a word drastically
+        change when placed in a different world, you would understand much better with an example. For example let’s
+        take the word “burn”, this word in reality means when something was at some point ignited with fire or about
+        to, but in the Malazan world this word take a totally different meaning and not in any way related, it’s the
+        name of a god.
+    </p>
+
+    <p class="block_text">
+        Below are some example of words with their different meaning.
+    </p>
+
+    <table class="table-content">
+        <thead>
+            <tr>
+                <th>Words</th>
+                <th>Meaning in the Real World</th>
+                <th>Meaning in the Malazan World</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Hood</td>
+                <td>The metallic covering of a car engine, or a cloth</td>
+                <td>The name of the god of death.</td>
+            </tr>
+            <tr>
+                <td>High Fist</td>
+                <td>Taken together they mean nothing, but taken apart they mean different things</td>
+                <td>They are mostly taken as a single word, which means a rank in a military structure.</td>
+            </tr>
+            <tr>
+                <td>Kindly</td>
+                <td>In a kind manner</td>
+                <td>The name of a soldier (who isn't even kind)</td>
+            </tr>
+            <tr>
+                <td>Divers</td>
+                <td>Someone who goes deep under waters</td>
+                <td>A shape shifter, it changes from a single entity to multiple entities</td>
+            </tr>
+            <tr>
+                <td>Curdle</td>
+                <td>A milk going spoilt</td>
+                <td>The name of a long dead Soletaken (A dragon)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="block_text">
+        Coming out of that visualization exercise you can now see how misconceptions like these can introduce
+        terrible errors in your model, not only that, there are also words that taken on it own means nothing
+        or completely different thing in the Malazan world, but must be combined with another word before the
+        meaning of the word could be revealed e.g T'lan Imass, High mage, High fist, Ampelas Rooted etc
+    </p>
+
+    <p class="block_text">
+        This is one of the important reason why having your own custom word vectors for specific use case is
+        imperative, but that does not mean the google word2vec should suddenly become useless to you, and you
+        wouldn't want to be building a word2vec model for every situation you encounter.
+    </p>
+
+    <p class="block_text">
+        You get optimal results when you combine both model together, with your custom word2vec vectors acting as
+        supplementary. You use the google word2vec vectors for more common words that are found in every day
+        English, and then use your custom word2vec vectors for those rare words or phrases that are only found in the
+        niche you are building your model for.
+    </p>
+
+    <p class="block_text">
+        We are now done with the blah blah part of building a word2vec, we are now going to dive into
+        the coding part of building it. let us import all the necessary modules needed to build the model
+    </p>
+
+    <p class="quotation-danger block_text">
+        This project requires that you have gone through the <a href="#">building a phrase model detector course</a>,
+        as it is a required prequisite.
+    </p>
+
+    <article class="code_content">
+        <h2></h2>
+
+        <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">callbacks</span>
+        <span class="kn">from</span> <span class="nn">gensim.models.word2vec</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
+        <span class="kn">from</span> <span class="nn">gensim.models.callbacks</span> <span class="kn">import</span> <span class="n">CallbackAny2Vec</span>
+        <span class="kn">from</span> <span class="nn">gensim.models.phrases</span> <span class="kn">import</span> <span class="n">Phrases</span>
+
+        <span class="o">%</span><span class="n">run</span> <span class="n">utils</span><span class="o">.</span><span class="n">py</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        There is nothing new in the above code except the little instruction on line 9 %run utils.py this
+        instruction executes the codes found in the*utils.py* file in this current namespace. This file
+        contains a very useful generic tools that feeds data to our model when training without having to
+        load all the text file to memory, it was defined when we built a phrase detector model. Defining it
+        here again would take up unnecessary space and distract us from our goal, so head
+        <a href="#">here.</a>
+    </p>
+
+    <article class="code_content">
+
+        <div class="highlight"><pre><span></span><span class="c1">###</span>
+
+        <span class="k">def</span> <span class="nf">load_phrase_detector_model</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">reduce_size</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Load a phrase detector model from disk.</span>
+        <span class="sd">    Parameters:</span>
+        <span class="sd">    fname: str</span>
+        <span class="sd">        path to the pretrained phrase detector model</span>
+        <span class="sd">    reduce_size: bool</span>
+        <span class="sd">        should be False if the full sized model was saved during training of the phrase detector</span>
+        <span class="sd">        model, then it would be reduced in size when loaded, else it should False will raise an</span>
+        <span class="sd">        AttributeError if set to True and the phrase detector model is not a full sized model</span>
+        <span class="sd">    &quot;&quot;&quot;</span>
+            <span class="n">phrases</span> <span class="o">=</span> <span class="n">Phrases</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading complete&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">phrases</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span> <span class="k">if</span> <span class="n">reduce_size</span> <span class="k">else</span> <span class="n">phrases</span>
+
+
+        <span class="c1"># load a phrase detect or model</span>
+        <span class="n">phrase_model_path</span> <span class="o">=</span> <span class="s2">&quot;malaz_phrase_detector&quot;</span>
+        <span class="n">phrases</span> <span class="o">=</span> <span class="n">load_phrase_detector_model</span><span class="p">(</span><span class="n">phrase_model_path</span><span class="p">,</span> <span class="n">reduce_size</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sentences_iterator</span> <span class="o">=</span> <span class="n">CustomPathLineSentences</span><span class="p">(</span><span class="s1">&#39;Books&#39;</span><span class="p">,</span> <span class="n">include_phrase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">phrase_model</span><span class="o">=</span><span class="n">phrases</span><span class="p">)</span>
+        </pre></div>
+
+    </article>
+
+    <p class="block_text_code">
+        If a phrase detector model is passed to the custom iterator, as it iterates through sentences
+        it combines any combination of words that constitutes phrase detected in the sentence into a
+        single word, and returns the modified sentence (for example “High Fist” to “High_Fist”).
+    </p>
+
+    <p class="quotation block_text">
+        It doesn’t do this when we were building a phrase detector model, it simply return the split words, that is
+        why I said the function is generic and a very useful tool to have in your toolbelt.
+    </p>
+
+    <p class="block_text">
+        The phrase detector model solves the problem of where a combination of words constitute a word,
+        this will help the word2vec model find the word vector that best represent the
+        semantic meaning of the combined word.
+    </p>
+
+    <p class="quotation-danger block_text">
+        The text files must have the same structure as explained in the phrase detector project.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="n">model_path</span> <span class="o">=</span> <span class="s2">&quot;malaz_word2vec.bin&quot;</span>
+            
+        <span class="k">class</span> <span class="nc">CustomCallback</span><span class="p">(</span><span class="n">CallbackAny2Vec</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Create a custom callback that save the model at the end of each</span>
+        <span class="sd">    epoch and at the end of training, while also reporting the current epoch</span>
+        <span class="sd">    value.</span>
+        <span class="sd">    &quot;&quot;&quot;</span>
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_trained</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_trained</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__epoch_trained</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; | &#39;</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+
+        <span class="n">epochs</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">vector_size</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">min_count</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">window_SIZE</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">subsampling</span> <span class="o">=</span> <span class="mf">1e-3</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">vector_size</span><span class="o">=</span><span class="n">vector_size</span><span class="p">,</span>
+                         <span class="n">min_count</span><span class="o">=</span><span class="n">min_count</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+                         <span class="n">sample</span><span class="o">=</span><span class="n">subsampling</span><span class="p">)</span>
+
+        <span class="c1"># build word vector vocabulary</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">build_vocab</span><span class="p">(</span><span class="n">sentences_iterator</span><span class="p">)</span>
+
+        <span class="c1"># training word2vec</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">sentences_iterator</span><span class="p">,</span> <span class="n">total_examples</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">corpus_count</span><span class="p">,</span>
+                    <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">compute_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">CustomCallback</span><span class="p">()])</span>
+
+        <span class="c1"># just for precaution sake</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+        </pre></div>
+
+    </article>
+
+    <p class="block_text_code">
+        It might take minutes or hours depending on your computer, I slept off after 4 hours and it was
+        still at 300 epochs. That is why I save it after every epoch and at when it finally completes
+        training [during when I was probably asleep] and again (to be doubly sure it was save). With this
+        simple word vector alone, you can build a fairly complex sentiment analysis model center around
+        this author, there will be a drastic drop of accuracy if another author is added to the mix.
+        <br><br>
+        God loves you!
+    </p>
+
+
+{% endblock post %}

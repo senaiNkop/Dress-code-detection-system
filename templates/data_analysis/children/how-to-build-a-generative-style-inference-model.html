@@ -1,0 +1,410 @@
+{% extends 'data_analysis/index.html' %}
+{% load static %}
+
+{% block tags %}
+    <h2 style="margin-right: 10px;">Data Science</h2>
+    <h2 style="margin-right: 10px;">NLP</h2>
+    <h2 style="margin-right: 10px;">Generative Model</h2>
+{% endblock tags %}
+
+{% block post %}
+    <p>
+        We have all read books of authors written in eccentric style, twisting the English words
+        to create their own unique pattern for their books (Shakespeare, Steven Erikson, Patrick
+        Rothfuss, etc.) or even developed their own languages (J. R. R. Tolkien, George R. R. Martin,
+        George Orwell, etc.). As fellow book lovers, we all wish if possible to be able to emulate the
+        writing style of our favorite author, but such an endeavour will likely take months or years
+        of intense study to be able to emulate.
+    </p>
+
+    <p class="block_text">
+        To this purpose we are going to build a machine learning model that will do that for us, it will
+        learn the way the author spells and punctuate when he writes, his style of grammar, choice of
+        words and tone. To be able to do that, we have to show the model, books written exclusively by
+        the author to learn from them.
+    </p>
+
+    <p class="quotation block_text">
+        Showing the learning model, books written by different authors makes it hard for the model to detect the tone, word
+        choice and punctuation style of the authors, as many authors have diverse style and personality. Therefore
+        finding a common ground across them will be extremely difficult.
+    </p>
+
+    <p class="block_text">
+        The books that will be used to train the model, are those written by the greatest fantasy writer
+        of all time Steven Erikson (The Malazan Book of the Fallen). The novel is a 10 book series with a
+        total of over 10,000 pages. You can download the books
+        <a href="https://www.amazon.com/Complete-Malazan-Book-Fallen-ebook/dp/B00HL0MA3W">here</a>. Convert
+        the file[s] to txt so that it can be easily opened in python.
+    </p>
+
+    <p class="block_text">
+        This is a unique project in that multiple sub models have to be built in order to develop this
+        style inference model. So before going further, pause and go through the prerequisite projects
+        of building the sub models before continuing
+    </p>
+
+    <ul class="bullets">
+        <li><a href="{% url 'data-analysis' 'how-to-build-a-malazan-empire-phrase-detector-model' %}" target="_blank">Building a Malazan Empire Common Phrases Detector model</a></li>
+        <li><a href="{% url 'data-analysis' 'how-to-build-a-special-case-word-vectors' %}" target="_blank">Building a Malazan Empire Custom Word Vector</a></li>
+    </ul>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="kn">import</span> <span class="nn">glob</span>
+        <span class="kn">import</span> <span class="nn">itertools</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+        <span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">WordPunctTokenizer</span>
+        <span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="kn">import</span> <span class="n">WordNetLemmatizer</span>
+        <span class="kn">from</span> <span class="nn">gensim.models.phrases</span> <span class="kn">import</span> <span class="n">Phrases</span>
+        <span class="kn">from</span> <span class="nn">gensim.models.word2vec</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
+        <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+        <span class="kn">from</span> <span class="nn">tensorflow</span> <span class="kn">import</span> <span class="n">keras</span>
+
+        <span class="c1"># you should be familiar with this by now</span>
+        <span class="o">%</span><span class="n">run</span> <span class="n">utils</span><span class="o">.</span><span class="n">py</span>
+        </pre></div>
+
+    </article>
+
+    <h1 style="margin: 20px 0;">Setting up prerequisite models</h1>
+
+    <p class="block_text">
+        If you are at this point, you must have gone through the prerequisite projects. So permit me to rush
+        through the boring and already familiar process of loading up our models needed to build this model.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="k">def</span> <span class="nf">load_phrase_detector_model</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">reduce_size</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">phrases</span> <span class="o">=</span> <span class="n">Phrases</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading complete&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">phrases</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span> <span class="k">if</span> <span class="n">reduce_size</span> <span class="k">else</span> <span class="n">phrases</span>
+
+        <span class="c1"># load a phrase detector model</span>
+        <span class="n">phrase_model_path</span> <span class="o">=</span> <span class="s2">&quot;malaz_phrase_detector&quot;</span>
+        <span class="n">phrases</span> <span class="o">=</span> <span class="n">load_phrase_detector_model</span><span class="p">(</span><span class="n">phrase_model_path</span><span class="p">,</span> <span class="n">reduce_size</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">sentences_iterator</span> <span class="o">=</span> <span class="n">CustomPathLineSentences</span><span class="p">(</span><span class="s1">&#39;Books&#39;</span><span class="p">,</span> <span class="n">include_phrase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">phrase_model</span><span class="o">=</span><span class="n">phrases</span><span class="p">)</span>
+
+        <span class="c1"># load word2vec model</span>
+        <span class="n">word2vec_path</span> <span class="o">=</span> <span class="s2">&quot;malaz_word2vec.bin&quot;</span>
+
+        <span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">word2vec_path</span><span class="p">)</span>
+        <span class="n">word2vec</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setup complete&quot;</span><span class="p">)</span>
+        </pre></div>
+    </article>
+
+    <h1 style="margin: 20px 0">Preprocessing Texts</h1>
+
+    <p class="block_text">
+        Remember our aim is to build a model that can write with the same style, tempo and grammar as the
+        author who wrote the texts. We are going to preprocess our text in a completely different way than
+        we did with the previous projects, though an element of each of them might be present. <br><br>
+
+        First we are going to load all the text files to your memory and join them into one big lump of text
+        to enable us perform some calculations, which we will see soon.
+
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="k">def</span> <span class="nf">preprocess_texts</span><span class="p">(</span><span class="n">sentences_iterator</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences_iterator</span><span class="p">:</span>
+                <span class="c1"># remember each sentence is a list of tokens</span>
+                <span class="c1"># punctuation included</span>
+                <span class="n">text</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of words (Phrases included) </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">text</span>
+
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">preprocess_texts</span><span class="p">(</span><span class="n">sentences_iterator</span><span class="p">)</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        The <small><samp>preprocess_text</samp></small> function iterates through the text files, tokenize, detect and combine phrases,
+        and saves each tokens (words) into a list.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="n">vocab</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+
+        <span class="n">word_indices</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vocab</span><span class="p">)}</span>
+        <span class="n">indices_word</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">word</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vocab</span><span class="p">)}</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of unique words: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        The <small><samp>vocab</samp></small> contains the unique words present in the text, the
+        <small><samp>word_indices</samp></small> is a dictionary of words to index for reference
+        when building a one-hot encoded target and finally, the <small><samp>indices_word</samp></small>
+        is the reverse dictionary that serves as a lookup when interpreting the one-hot encoded target.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+        <span></span><span class="n">total_words</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">total_sentences</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentences_iterator</span><span class="p">)</span>
+        <span class="n">avg_word_sentences</span> <span class="o">=</span> <span class="n">total_words</span> <span class="o">/</span> <span class="n">total_sentences</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Avg word per sentence: </span><span class="si">{</span><span class="n">avg_word_sentences</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        </pre></div>
+
+    </article>
+
+    <p class="block_text_code">
+        We calculated the average number of words in each sentences, and depending on the text files you use,
+        they might differs <em>[I got a value of 11.73]</em>. The purpose of this value is to tell us the minimum
+        baseline value, we should use when choosing the number of words a model will look at, before
+        making predictions on what the next word would be.
+    </p>
+
+    <h1 style="margin: 20px 0">Creating Dataset</h1>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="n">maxlen</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">avg_word_sentences</span> <span class="o">+</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">sentences</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">next_word_target</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+            <span class="n">sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
+            <span class="n">next_word_target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_word_target</span><span class="p">))</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        A lot of things is been done in the above code block, the <small><samp>maxlen</samp></small> variable
+        hold the maximum number of words that the model will have to look at before it can make prediction on
+        what the next word will be, <small><samp>step</samp></small> indicate the number of words to skip from
+        the beginning (for example take 50 words from the beginning of the text, move to the third word from
+        the beginning, take another 50, move to six … and so on.)
+    </p>
+
+    <p class="block_text">
+        Executing the code will create a list containing list of words each <small><samp>maxlen</samp></small>
+        long with it corresponding target, both of which will have the same length. So what our model is going
+        to do is that, it will look at the words in the <small><samp>sentence</samp></small> variable and
+        tries to predict the corresponding word found in the <small><samp>next_word_target</samp></small>.
+        With a sufficiently powerful model, it will be able to learn the author style of writing, punctuation,
+        tone, grammar and even words arrangement (i.e it will able to learn that if the author for example write
+        T’lan, it's always followed by Imass), a perfect imitator. Scary and exciting huh, let dig in!
+    </p>
+
+    <p class="block_text">
+        Hold up! you are familiar with machine learning enough to know that we can’t just feed the deep
+        learning algorithm with strings of text, it wouldn’t know what to do with it! So we would have
+        to convert the strings to palatable numbers for proper consumption by the model algorithm.
+    </p>
+
+    <h1 style="margin: 20px 0">Turning Water to Wine</h1>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="k">def</span> <span class="nf">cached_dataset</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">next_word_target</span><span class="p">,</span> <span class="n">word2vec</span><span class="p">,</span> <span class="n">word_indices</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;A factory function, it returns a generator function that has various</span>
+        <span class="sd">    variables cached in it scope that will be unaffected by the outer scope.</span>
+
+        <span class="sd">    Doing this will enable the iterator function to be called without the need</span>
+        <span class="sd">    for arguments and without the function to request the variables from the outer</span>
+        <span class="sd">    scopes, because they are stored in it internals.</span>
+        <span class="sd">    &quot;&quot;&quot;</span>
+
+            <span class="k">def</span> <span class="nf">generator</span><span class="p">():</span>
+                <span class="sd">&quot;&quot;&quot;An iterator function, it simply iterates through our earlier created dataset,</span>
+        <span class="sd">        changing the words in each sentence to its word vector representatives&quot;&quot;&quot;</span>
+
+                <span class="c1"># words not available in the word vector</span>
+                <span class="c1"># will be given a default word vectors where</span>
+                <span class="c1"># every dimension equals to zero</span>
+
+                <span class="n">unknown_word</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span> <span class="p">(</span><span class="n">word_vector</span><span class="o">.</span><span class="n">vector_size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">target_word</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">next_word_target</span><span class="p">):</span>
+                    <span class="c1"># create an dummy array of shape (len(sentence), embed_dim)</span>
+                    <span class="c1"># this is the word vector representation</span>
+
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">maxlen</span><span class="p">,</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">vector_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+                    <span class="c1"># fills in the dummy array with the real word vector values.</span>
+
+                    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word2vec</span><span class="p">:</span>
+                            <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">word_vector</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">unknown_word</span>
+
+                            <span class="c1"># create the target array</span>
+                            <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">word_indices</span><span class="p">[</span><span class="n">target_word</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+                            <span class="k">yield</span> <span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                                   <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">generator</span>
+
+
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">cached_dataset</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">next_word_target</span><span class="p">,</span> <span class="n">word2vec</span><span class="p">,</span> <span class="n">word_indices</span><span class="p">)</span>
+
+        <span class="c1"># create a tensor dataset generator using the Dataset API</span>
+        <span class="n">dataset_generator</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_generator</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">output_signature</span><span class="o">=</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">maxlen</span><span class="p">,</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">vector_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                                                                                  <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)))</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        The magic of this function, is that it converts the strings to its word vector representation on the fly,
+        without the intermediate steps of saving it to a file. It uses Tensorflow Dataset API to feed the numerical
+        data directly to the model during training [as you will soon see]. <br><br>
+
+        It uses the Dataset API to take full advantage of it ability in preprocessing more data (sentences) as the
+        model is training on a previous batch of preprocessed data, both at the same time, thereby dramatically
+        speeding up training.
+    </p>
+
+    <h1 style="margin: 20px 0">Building Model</h1>
+
+    <p class="block_text">
+        The moment we are waiting for, and also dreading, building and training the dataset. In building the model,
+        we are going to use LSTM architecture in the layers (research about them to learn how they work).
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="n">num_neuron</span> <span class="o">=</span> <span class="mi">500</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">maxlen</span><span class="p">,</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">vector_size</span><span class="p">)))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">num_neuron</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">num_neuron</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">num_neuron</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">))</span>
+
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;sparse_categorical_crossentropy&#39;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+
+        <span class="c1"># define a checkpoint callback [you will really need this]</span>
+        <span class="n">model_cb</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">ModelCheckpoint</span><span class="p">(</span><span class="s2">&quot;model.h5&quot;</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
+
+        <span class="c1"># GET READY TO RECIEVE THE GREATEST SHOCK</span>
+        <span class="c1"># OF YOUR LIFE WHEN YOU RUN THIS CODE</span>
+
+        <span class="c1"># Tell me what you see when you execute the code</span>
+        <span class="c1"># what did it display (You will know what I am</span>
+        <span class="c1"># talking about when you see it)</span>
+        <span class="n">epochs</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">32</span>
+        <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset_generator</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
+                  <span class="n">steps_per_epoch</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span>
+                  <span class="n">workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">model_cb</span><span class="p">])</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        We built our model and trained it, you may have noticed that we didn’t try to limit the complexity of
+        the model by adding limiting layers (dropout, batch normalization, etc). Doing so would have hindered
+        our purpose of trying to imitate our writer, and for that to happen, our model would have to overfit
+        on the data (this is one of those rare instances where overfitting the dataset becomes a good thing).
+        So the more complex you can make your model, the greater the ability of the model to imitate the writer.
+    </p>
+
+    <p class="quotation-danger block_text">
+        You will be much better off training this model on Kaggle or Google Colab than on your local computer,
+        as training this model is highly intensive and may take an extraordinary amount of time [Think days].
+    </p>
+
+    <h1 style="margin: 20px 0">Putting it to Work</h1>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+        <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span> <span class="o">/</span> <span class="n">temperature</span>
+            <span class="n">exp_preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">exp_preds</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">exp_preds</span><span class="p">)</span>
+            <span class="n">probas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probas</span><span class="p">)</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        The sample function just tell us which word have the highest probability of coming next
+        <sup><a href="#one">1</a></sup>
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;it was not of Jaghut construction, that it had arisen beside the three Jaghut towers of its own</span>
+        <span class="s2">accord, in answer to a law unfathomable to god and mortal alike. Arisen to await the coming ofthose whom</span>
+        <span class="s2"> it would imprison for eternity. Creatures of deadly power.</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">sentences_iterator</span><span class="o">.</span><span class="n">clean_token_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="n">maxlen</span><span class="p">]</span>
+
+        <span class="n">generated</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">generated</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">generate</span><span class="p">)</span>
+        <span class="n">unknown_word</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">word_vector</span><span class="o">.</span><span class="n">vector_size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">400</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">vector_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word2vec</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">word2vec</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">unknown_word</span>
+                <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">next_index</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">preds</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">temp</span><span class="p">)</span>  <span class="c1"># optimal value 0.2 to 0.4, test</span>
+                <span class="n">next_word</span> <span class="o">=</span> <span class="n">indices_word</span><span class="p">[</span><span class="n">next_index</span><span class="p">]</span>
+                <span class="n">generated</span> <span class="o">+=</span> <span class="n">next_word</span>
+
+                <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_word</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">next_word</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        You can see that the model was able to some extent imitate the writing style of the writer,
+        with the level of imitation getting higher depending on the complexities of your model. Not bad
+        for a simple model, and it is something we can definitely have fun with, or you can go on ahead
+        to imitate the author you have always admired. <br><br>
+
+        God loves you!
+    </p>
+
+    <h1 style="margin: 20px 0">Reference</h1>
+    <ol class="bullets">
+        <li><em id="one">Natural Processing in Action</em></li>
+    </ol>
+{% endblock post %}

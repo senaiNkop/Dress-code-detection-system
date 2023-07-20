@@ -1,0 +1,157 @@
+{% load static %}
+{% load extra_tags %}
+
+<!DOCTYPE html>
+<head>
+<title>{{ company_name }}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/portfolio/code_themes/monokai.css' %}" >
+    {#<link rel="stylesheet" type="text/css" href="{% static 'assets/css/portfolio/code_themes/light.css' %}" />#}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/portfolio/data_analysis/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/portfolio/site_wide.css' %}" />
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/images/icon.png' %}" rel="icon">
+    <link href="{% static 'assets/images/icon.png' %}" rel="apple-touch-icon">
+{#    <!--[if lte IE 6]>#}
+{#<link rel="stylesheet" type="text/css" href="{% static 'assets/css/portfolio/data_analysis/ie6.css' %}" />#}
+
+<script type="text/javascript" src="{% static 'assets/js/portfolio/data_analysis/unitpngfix.js' %}"></script>
+<![endif]-->
+<script type="text/javascript" src="{% static 'assets/js/portfolio/data_analysis/javascript.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/portfolio/data_analysis/jquery-1.3.2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/portfolio/data_analysis/jquery.cycle.all.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/portfolio/data_analysis/scripts.js' %}"></script>
+</head>
+<body>
+<!-- BEGIN wrapper -->
+<div id="wrapper">
+  <p class="rss"> <a href="{% url 'senai' %}">Home</a> | <a href="mailto:samueleffiong80@gmail.com">Contact Us</a> </p>
+  <!-- BEGIN header -->
+  <div id="header">
+    <h1><a href="{% url 'data-analysis' data.slug %}">{{ company_name }}</a></h1>
+    <div class="break"></div>
+  </div>
+  <!-- END header -->
+  <!-- BEGIN body -->
+  <div id="body">
+    <!-- BEGIN content -->
+    <div id="content">
+      <!-- begin featured-posts -->
+      {% block tags %}
+          <h2>Blog</h2>
+      {% endblock tags %}
+      <div class="break"></div>
+        <h1 style="margin: 20px 15px">{{ data.title }}</h1>
+        <div class="featured-img">
+          <div id="featured">
+          <div class="featured">
+            <ul class="photo">
+              {% block feature_img %}
+                  <li class="first"><img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/two_people_shaking_hands.webp' %}" alt="" /></li>
+                  <li><img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/pocket_watch_2.webp' %}" alt="" /></li>
+                  <li><img src="{% static 'assets/images/portfolio/data_analysis/thumb02.jpg' %}" alt="" /></li>
+              {% endblock feature_img %}
+            </ul>
+            <ul class="text">
+                {% block feature_text %}
+                  <li class="first">
+                    <h1 style="color: red; font-size: 3em; margin-bottom: 15px">Are They Among Us?</h1>
+                    <p style="font-size: 1.1em">
+                        80% of victims who are women are assaulted in their homes. Who are
+                        these assailants, and do they know the victims? Could they be siblings,
+                        brothers, parents or hopefully total strangers?
+                        <br/><br/>
+
+                        Or do that really matters?
+                    </p>
+                  </li>
+                  <li>
+                    <h2>Art Gallery and Fashion Showroom 2</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse interdum. Donec tristique dolor nec nisi. Ut faucibus metus non orci. Etiam posuere netus, libero condimentum eu. Aenean a ut. Elit aliquet porttitor. Donec tristique dolor nec nisi. Ut faucibus metus non orci.</p>
+                  </li>
+                  <li>
+                    <h2>Art Gallery and Fashion Showroom 3</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse interdum. Donec tristique dolor nec nisi. Ut faucibus metus non orci. Etiam posuere netus, libero condimentum eu. Aenean a ut. Elit aliquet porttitor. Donec tristique dolor nec nisi. Ut faucibus metus non orci.</p>
+                  </li>
+                {% endblock feature_text %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- end featured-posts -->
+
+      <!-- begin post -->
+      <div class="post">
+        {% block post %}
+        {% endblock post %}
+{#          <p class="date">04.23.09 &nbsp;&nbsp;| <a href="#">Advertising</a> |&nbsp; CHIQ MONTES</p>#}
+          <a class="comment" style="display: none">11 Comments</a> </div>
+        <div class="break"></div>
+    </div>
+    <!-- END content -->
+    <!-- BEGIN sidebar -->
+    <div id="sidebar">
+      <!-- begin popular posts -->
+      <div class="pop">
+        <h2>Tools Used</h2>
+        <div class="break"></div>
+        <ul>
+            {% for item in data.tools_used|separate_tools %}
+                <h4 style="margin-bottom: 10px;">{{ item }}</h4>
+            {% endfor %}
+        </ul>
+        <div class="break"></div>
+      </div>
+
+      <div class="tag">
+        <h2>Dataset meta</h2>
+        <div class="break"></div>
+        <p class="meta_description"> {{ data.description }} </p>
+        <div class="break"></div>
+      </div>
+      <!-- end tagcloud -->
+
+      <div class="break"></div>
+
+      <div class="break"></div>
+
+      <!-- begin blogroll -->
+      <div class="blogroll">
+        <h2>Download</h2>
+        <div class="break"></div>
+        <p class="meta_description">
+            {% if data.download_link is None %}
+                Not available
+            {% else %}
+                Download dataset <a href="{{ data.download_link }}" target="_blank">here.</a>
+            {% endif %}
+        </p>
+        <div class="break"></div>
+      </div>
+      <!-- end blogroll -->
+      <div class="break"></div>
+      <div class="tag">
+        <h2>About</h2>
+        <div class="break"></div>
+        <p class="meta_description">
+            {{ company_name }} is an emerging AI start-up company dedicated to increasing the capacities of
+            websites with state of the art AI technologies.
+        </p>
+        <div class="break"></div>
+      </div>
+
+    </div>
+    <!-- END sidebar -->
+    <div class="break"></div>
+  </div>
+  <!-- END body -->
+  <!-- BEGIN footer -->
+  <div id="footer">
+      {% include 'include/copyright.html' %}
+  </div>
+  <!-- END footer -->
+</div>
+<!-- END wrapper -->
+</body>
+</html>

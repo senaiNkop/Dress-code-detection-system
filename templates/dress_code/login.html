@@ -1,0 +1,259 @@
+{% load static %}
+{% load extra_tags %}
+
+<!doctype html>
+<html class="no-js" lang="en">
+
+<!-- login.html  03:24:52 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ WEBSITE_NAME }}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link href="{% static 'assets/images/icon.png' %}" rel="shortcut icon" type="image/x-icon">
+    <link href="{% static 'assets/images/icon.png' %}" rel="apple-touch-icon">
+    
+    <!-- CSS 
+    ========================= -->
+   
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/plugins.css' %}">
+    
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/custom.css' %}">
+
+</head>
+
+<body>
+
+    <!--header area start-->
+    <!--Offcanvas menu area start-->
+    <div class="off_canvars_overlay">
+
+    </div>
+    <div class="Offcanvas_menu">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="canvas_open">
+                        <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
+                    </div>
+                    <div class="Offcanvas_menu_wrapper">
+                        <div class="canvas_close">
+                            <a href="javascript:void(0)"><i class="ion-android-close"></i></a>  
+                        </div>
+                        <div class="support_info" style=margin-bottom:20px>
+                            <p>Any Enquiry: <a href="tel:{{ TEL }}">{{ TEL }}</a></p>
+                        </div>
+                        
+                        <div id="menu" class="text-left ">
+                            <ul class="offcanvas_main_menu">
+                                <li class="menu-item-has-children active">
+                                    <a href="{% url 'senai' %}">Home</a>
+                                </li>
+                                <li class="menu-item-has-children">
+                                    <a href="product-details.html">Contact Us</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="Offcanvas_footer">
+                            <span><a href="mailto:{{ EMAIL }}"><i class="fa fa-envelope-o"></i>{{ EMAIL }}</a></span>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+     <!--Offcanvas menu area end-->
+
+    <header>
+        <div class="main_header">
+            <!--header top start-->
+            <div class="header_top">
+                <div class="container">  
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="support_info">
+                                <p>Email: <a href="mailto:">{{ EMAIL }}</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--header top start-->
+            <!--header middel start-->
+            <div class="header_middle">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="logo">
+                                <a href="{% url 'dress-code:homepage' %}"><img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Senai Logo"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--header middel end-->
+            <!--header bottom satrt-->
+            <div class="main_menu_area">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="main_menu menu_position"> 
+                                <nav>  
+                                    <ul>
+                                        <li><a href="{% url 'dress-code:homepage' %}">Home</a></li>
+                                        <li><a href="{% url 'dress-code:about' %}">About</a></li>
+                                    </ul>  
+                                </nav> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--header bottom end-->
+        </div> 
+    </header>
+    <!--header area end-->
+
+    {% block content %}
+        <!--breadcrumbs area start-->
+        <div class="breadcrumbs_area">
+            <div class="container">   
+                <div class="row">
+                    <div class="col-12">
+                        <div class="breadcrumb_content">
+                            <ul>
+                                <li><a href="{% url 'dress-code:homepage' %}">home</a></li>
+                                <li>Login</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>         
+        </div>
+        <!--breadcrumbs area end-->
+
+        <section class="account">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <p style="text-align: center; font-weight: bold">{{ LOGIN_PHRASE|random_choice }}</p>
+                        <div class="account-contents" >
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="background: url('{% static 'assets/images/logo6.gif' %}'); background-size: cover; background-position: center">
+                                    <div class="account-thumb">
+                                        <h2>Welcome!</h2>
+                                        <p>
+                                            {{ SHORT_STORIES|random_choice }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="account-content">
+                                        {% if error %}
+                                            <div id="dismiss_notification" class="alert alert-danger align-items-center" role="alert">
+                                                <div>
+                                                    {{ error }}...Click to dismiss
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <form method="post">
+                                            <div class="single-acc-field">
+                                                <label for="email">Email</label>
+                                                <input type="text" name="email" id="email" placeholder="Enter your Email or Username" required>
+                                            </div>
+                                            <div class="single-acc-field">
+                                                <label for="password">Password</label>
+                                                <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                                            </div>
+                                            <div class="single-acc-field">
+                                                <button type="submit">Login Account</button>
+                                            </div>
+                                            <a href="{% url 'dress-code:register' %}">No Account Yet?</a>
+
+                                            {% csrf_token %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    {% endblock content %}
+
+    <!--footer area start-->
+    <footer class="footer_widgets">
+        <div class="footer_top">
+            <div class="container">
+                <div class="row">
+                <div class="col-lg-7 col-md-8">
+                    <div class="widgets_container">
+                        <div class="footer_contact" style="text-align: justify">
+                            <h3>Dear Student</h3>
+                            <p>
+                                We would like to bring to your attention the introduction of a new software that
+                                will monitor your dressing within the school premises. The software will be designed
+                                to help maintain the appropriate dress code in the educational sector and ensure that
+                                our learning environment remains conducive for all students.
+                            </p>
+                            <p>
+                                We understand that this may seem intrusive or unnecessary, but we believe it is
+                                important to maintain a level of professionalism and decorum within our schools.
+                                The software is not intended to embarrass or shame anyone, but rather to promote
+                                a sense of responsibility and respect for ourselves and others.
+                            </p>
+                            <p>
+                                We encourage you to embrace this software as a tool that will ultimately enhance
+                                your learning experience and contribute to a positive and respectful school community.
+                                Thank you for your cooperation and participation in helping build this project.
+                            </p>
+
+Sincerely,</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="footer_bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="copyright_area">
+                            <p> <a href="{% url 'senai' %}">{{ COMPANY_NAME }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+    </footer>
+    <!--footer area end-->
+
+
+<!-- JS
+============================================ -->
+
+
+<!-- Plugins JS -->
+<script src="{% static 'assets/dress_code/js/plugins.js' %}"></script>
+
+<!-- Main JS -->
+<script src="{% static 'assets/dress_code/js/main.js' %}"></script>
+<script src="{% static 'assets/dress_code/js/custom_code.js' %}"></script>
+
+
+</body>
+
+<!-- login.html  03:24:52 GMT -->
+</html>

@@ -1,0 +1,306 @@
+{% extends 'dress_code/index.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block content %}
+<!-- ========== tab components start ========== -->
+    <section class="tab-components">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title mb-30">
+                  <h2>Data Collection</h2>
+                </div>
+
+                {% if error %}
+                    <div id="dismiss_notification" class="col-12 mb-0 alert alert-danger" role="alert">
+                        <h5 class="alert-heading">Error</h5>
+                        <p>{{ error }}</p>
+                        <hr>
+                        <p class="mb-0">Click this message to dismiss</p>
+                    </div>
+                    <br>
+                {% endif %}
+
+                {% if success %}
+                    <div id="dismiss_notification" class="col-12 mb-0 alert alert-success" role="alert">
+                        <h5 class="alert-heading">Well done {{ user.username }}!</h5>
+                        <p>{{ success }}</p>
+                        <hr>
+                        <p class="mb-0">Click this message to dismiss</p>
+                    </div>
+                    <br>
+                {% endif %}
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="{% url 'senai' %}">Senai</a>
+                      </li>
+                      <li class="breadcrumb-item"><a href="{% url 'dress-code:homepage' %}">Dashboard</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Data Collection
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <!-- ========== form-elements-wrapper start ========== -->
+          <div class="form-elements-wrapper">
+            <div class="row">
+                <form method="post" enctype="multipart/form-data">
+                  <div class="col-lg-10">
+                    <!-- input style start -->
+                    <div class="card-style mb-30">
+                      <h6 class="mb-25">{{ DATA_COLLECTION_JOKES|random_choice }}</h6>
+                      <div style="margin: 20px 0;">
+                          <label>Sex</label>
+                          <div>
+                              <input class="form-check-input" name="sex" type="radio" value="0" id="male">
+                              <label class="form-check-label" for="male" style="margin-right: 10px">Male</label>
+
+                              <input class="form-check-input" name="sex" type="radio" value="1" id="female">
+                              <label class="form-check-label" for="female" style="margin-right: 10px">Female</label>
+
+                              <input class="form-check-input" name="sex" type="radio" value="2" id="others" checked>
+                              <label class="form-check-label" for="others" style="margin-right: 10px">Others</label>
+                          </div>
+                      </div>
+
+                      <div class="select-style-2">
+                        <label>Category</label>
+                        <div class="select-position">
+                          <select id="category" name="category">
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="input-style-1">
+                        <label>Location (Optional)</label>
+                        <input type="text" name="location" placeholder="Location the image(s) was taken" />
+                      </div>
+                      <!-- end input -->
+                    </div>
+                    <!-- end card -->
+                    <!-- ======= input style end ======= -->
+
+                    <!-- ======= select style start ======= -->
+                    <div class="card-style mb-30">
+                      <h6 class="mb-25">{{ AI_JOKES|random_choice }}</h6>
+                      <div>
+                          <p>Please ensure as much as possible your images meet the following criteria</p>
+                          <ul style="list-style-type: circle; padding: 15px 40px">
+                              <li style="margin-bottom: 10px">The images as much as possible should contain only a single figure</li>
+                              <li style="margin-bottom: 10px">
+                                  The images should be taken in different lighting conditions to ensure that
+                                  the model can detect clothing regardless of the lighting.
+                              </li>
+                              <li style="margin-bottom: 10px">
+                                  The images should be taken with a variety of body shapes, sizes, and types of
+                                  clothing to ensure the model is capable of detecting a wide range of clothing styles.
+                              </li>
+                              <li>...<a href="#" class="me-2" data-bs-toggle="modal" data-bs-target="#staticBackdropLive">see more</a></li>
+                          </ul>
+
+                          <p>
+                              Click <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#exampleModalCenteredScrollable">here</button>
+                              to see sample images</p><br>
+                      </div>
+                      <div class="input-style-1">
+                        <label>Upload your images</label>
+                        <input type="file" name="images" multiple required/>
+                      </div>
+                    </div>
+
+                    <button type="submit" class="main-btn primary-btn rounded-md btn-hover">Submit</button>
+                    {% csrf_token %}
+                  </div>
+
+                </form>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== form-elements-wrapper end ========== -->
+        </div>
+    <!-- end container -->
+    </section>
+    <div class="modal fade" id="exampleModalCenteredScrollable" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Sample Images</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for img in no_of_sample_pics %}
+                            {% if forloop.counter0 == 0 %}
+                                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter0 }}" class="active" aria-current="true"></button>
+                            {% endif %}
+                            {% if forloop.counter0 != 0 %}
+                                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter0 }}" class=""></button>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                        {% for img in no_of_sample_pics %}
+                            {% if forloop.counter0 == 0 %}
+                                <div class="carousel-item active">
+                                    <img src="{% static 'assets/dress_code/img/sample_pic'|format_src:img %}" alt="" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="1000" height="600" role="img">
+
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>{{ forloop.counter0 }} slide label</h5>
+                                        <p>{{ img }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if forloop.counter0 != 0 %}
+                                <div class="carousel-item">
+                                    <img src="{% static 'assets/dress_code/img/sample_pic'|format_src:img %}" alt="" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="1000" height="600" role="img">
+
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>{{ forloop.counter0 }} slide label</h5>
+                                        <p>{{ img }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdropLive" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLiveLabel">Minimum Requirement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ol style="list-style-type: circle; padding: 15px">
+                    <li style="margin-bottom: 10px">
+                        The images should be taken from different angles to ensure that the model can
+                        accurately detect clothing regardless of the camera's angle.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken in a variety of locations, including indoors and outdoors,
+                        to ensure that the model can accurately detect clothing in different settings.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken in different seasons to ensure that the model can detect
+                        clothing regardless of the weather.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken with a variety of backgrounds to ensure that the model can
+                        accurately detect clothing regardless of the background.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken with a variety of poses to ensure that the model can detect
+                        clothing regardless of the person's pose.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken with a variety of camera qualities to ensure that the model can
+                        detect clothing in images with different resolutions and image quality.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken with different types of cameras, including smartphones and
+                        professional cameras, to ensure that the model can detect clothing regardless of the
+                        camera used.
+                    </li>
+                    <li style="margin-bottom: 10px">
+                        The images should be taken by a diverse group of people, including people of different ages,
+                        genders, and races, to ensure that the model is not biased towards a particular group.
+                    </li>
+                </ol>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
+            </div>
+            </div>
+        </div>
+    </div>
+<!-- ========== tab components end ========== -->
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'assets/dress_code/js/custom_code.js' %}"></script>
+    <script>
+        const male = document.getElementById('male');
+        const female = document.getElementById('female');
+        const others = document.getElementById('others');
+
+        const select_category = document.getElementById('category');
+
+        improperDressCode = 'Improper Dress code'
+
+        const maleCategory = {
+            0: 'Proper Dress code', 1: `Rag Jeans (${improperDressCode})`,
+            2: `Short Trousers (${improperDressCode})`,
+            3: `Singlets (${improperDressCode})`,
+            4: `Dreadlocks (${improperDressCode})`
+        }
+        const femaleCategory = {
+            0: 'Proper Dress code', 5: `Mini skirt (${improperDressCode})`,
+            6: `Bum Short (${improperDressCode})`,
+            7: `Revealing Clothes (${improperDressCode})`,
+            8: `Very Tight clothes (${improperDressCode})`,
+        }
+
+        male.addEventListener('click', event => {
+            select_category.options.length = 0;
+            for (let item in maleCategory) {
+                select_category.options[select_category.options.length] = new Option(maleCategory[item], item);
+            }
+        })
+
+        female.addEventListener('click', event => {
+            select_category.options.length = 0
+            for (let item in femaleCategory) {
+                select_category.options[select_category.options.length] = new Option(femaleCategory[item], item);
+            }
+        })
+
+        others_event = (event=null) => {
+            select_category.options.length = 0
+            for (let item in maleCategory) {
+                select_category.options[select_category.options.length] = new Option(maleCategory[item], item);
+            }
+            for (let item in femaleCategory) {
+                if (parseInt(item) === 0) {
+                    continue
+                }
+                select_category.options[select_category.options.length] = new Option(femaleCategory[item], item);
+            }
+        }
+
+        others.addEventListener('click', others_event)
+        others_event();
+    </script>
+{% endblock javascript %}

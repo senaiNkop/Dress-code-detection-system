@@ -1,0 +1,12 @@
+
+<p>
+    Copyright &copy; <span id="date"></span> -  <a href="{% url 'senai' %}">{{ company_name }}</a>: Software with an AI mindset &middot;
+    All Rights Reserved &middot; <a href="mailto:{{ company_email }}">{{ company_email}}</a>
+</p>
+<script>
+  date_span = document.getElementById('date');
+  date = new Date();
+
+  date_span.textContent = String(date.getFullYear());
+
+</script>

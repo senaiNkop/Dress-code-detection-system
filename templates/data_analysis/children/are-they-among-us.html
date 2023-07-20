@@ -1,0 +1,165 @@
+{% extends 'data_analysis/index.html' %}
+{% load static %}
+
+{% block tags %}
+    <h2 style="margin-right: 10px;">Data Analysis</h2>
+    <h2 style="margin-right: 10px;">Data Visualization</h2>
+    <h2>Crime</h2>
+{% endblock tags %}
+
+
+{% block feature_img %}
+    <li class="first"><img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/two_people_shaking_hands.webp' %}" alt="" /></li>
+    <li><img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/pocket_watch_2.webp' %}" alt="" /></li>
+{% endblock feature_img %}
+
+{% block feature_text %}
+    <li class="first">
+        <h1 style="color: red; font-size: 3em; margin-bottom: 15px">Are They Among Us?</h1>
+        <p style="font-size: 1.1em">
+            80% of victims who are women are assaulted in their homes. Who are
+            these assailants, and do they know the victims? Could they be siblings,
+            brothers, parents or hopefully total strangers?
+            <br/><br/>
+
+            Or do that really matters?
+        </p>
+    </li>
+    <li>
+        <h1 style="color: red; font-size: 3em; margin-bottom: 15px">The 10th Hour</h1>
+        <p style="font-size: 1.1em">
+            80% of victims who are women are assaulted in their homes. Who are
+            these assailants, and do they know the victims? Could they be siblings,
+            brothers, parents or hopefully total strangers?
+            <br/><br/>
+
+            Or do that really matters?
+        </p>
+    </li>
+{% endblock feature_text %}
+
+{% block post %}
+    <p>
+        This research analyzes the shootings that are taking place in New York critically and aims to uncover
+        the shooters, motivations, and affiliations of the victims.
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        The NYPD Shooting Incident Data (Historical), which covers the years 2006 to 2020, is the dataset used for
+        the projects. Click here to obtain the dataset and learn more about how the data was gathered. Only 42% of
+        the shooters in the tens of thousands of shootings that have taken place in New York alone have been
+        identified; the other shooters are still at large.
+    </p>
+
+    <p>
+        <img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/barchart_1.webp' %}"
+             alt="A barchart showing the frequency of known shooters and unidentified shooters">
+    </p>
+
+    <p>
+        For context, if there are 1000 shootings in New York in a year, 420 gunmen are apprehended by police,
+        while 580 remain at large. This indicates that there is a roughly 60% possibility of the shooters
+        eluding capture.
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        To begin our journey of discovering the identities of our shooters. I started by identifying the sex
+        of the shooters and their victims. Which showed that 1 out of 40 shooters are female, and also 1 out
+        of 10 victims are FEMALE. To put it simply, it means that while there are a whole lot fewer shooters
+        that are female, there are significantly more female victims.
+    </p>
+
+     <p>
+        <img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/barchart_2.webp' %}"
+             alt="A chart showing the ratio of females to male shooters">
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        But despite the fact that men make up the majority of the shooters, MANY OF THEIR VICTIMS APPEAR TO BE WOMEN.
+        I tried to determine the reasons why the crimes were being committed by concentrating primarily on the female
+        victims. <em style="font-weight: bold">Why Do They Have to Suffer for our Actions?</em>
+    </p>
+
+     <p>
+        <img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/barchart_3.webp' %}"
+             alt="A barchart">
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        From the information above, we are beginning to identify the shooters and have understanding of their crimes.
+        <ul class="bullets">
+            <li>The majority of the shooters are males</li>
+            <li>Most of the shootings occurs in homes</li>
+        </ul>
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        The shooters were further categorized into age groups, which led to the discovery that majority of the the
+        women were shot by men their own age
+    </p>
+    <p>
+        <img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/barchart_4.webp' %}"
+             alt="A barchart">
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        The analysis from the above plot indicates that:
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        <em>For victims who lived in Multi-dwelling apartments:</em>
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        <ul class="bullets">
+            <li>The majority of the shooters falls with the age group of 25–44</li>
+            <li>
+                Shooters between the ages of 18 and 24 perpetrate the majority of crimes against those under the age
+                of 18 and above the age of 65. Which are more likely to be their siblings, parents or grandparents.
+            </li>
+            <li>
+                Shooters between the age of 25–44 perpetrate the majority of crimes against those between the age
+                of 18–64. Which may likely be their siblings, partners or spouse.
+            </li>
+        </ul>
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        <b>Note:</b> The nature of the house must also be taken into account;
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        Since it is a multi-dwell flat, victims and perpetrators under 24 are more likely to live with their parents
+        and siblings rather than possess their own apartment. Because of this, the age group for victims attacked by
+        shooters between 18–24 falls with less than 18 years and higher than 65 years.
+    </p>
+
+    <p class="quotation" style="margin-bottom: 15px;">
+        The analysis only applies to those who lives in Multi-dwell apt, and also does neglect to mention that some of
+        these shooters might be complete strangers unaffiliated with their victims.
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        These demonstrates that the majority of shooters who target women do so because they are people who are either
+        familiar with the victims or have access to their home. A member of this group might be a friend, a spouse, a
+        a sibling, or even a parent.
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        <b style="font-size: 1.4em">10pm the most dangerous time for women?</b>
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        It is evident from the plot below that there are more attacks as the night wears on, peaking around 10 p.m.
+    </p>
+
+    <p>
+        <img src="{% static 'assets/images/portfolio/data_analysis/are_they_among_us/barchart_5.webp' %}"
+             alt="A barchart">
+    </p>
+
+    <p style="margin-bottom: 15px;">
+        Further analysis can be extracted from the plot, but I leave it to you to make such observation from the plot.
+    </p>
+
+{% endblock post %}

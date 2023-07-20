@@ -1,0 +1,274 @@
+{% extends 'data_analysis/index.html' %}
+{% load static %}
+
+{% block tags %}
+    <h2 style="margin-right: 10px;">Data Science</h2>
+    <h2 style="margin-right: 10px;">NLP</h2>
+{% endblock tags %}
+
+{% block post %}
+    <p>
+        Now I’m not huge on big words, I believe in explaining things in my own understanding, and I
+        discovered that people (newbies) tends to understand a concept better/faster when a fellow newbie
+        explains a concept in the way he understands it, thereby breaking it to his level. But those who
+        strive for the big technical definition can go research, they are all over the internet.
+    </p>
+
+    <h1>What is a Phrase Detector</h1>
+
+    <p>
+        A phrase detector is an implemented algorithm that uses several techniques with the most popular being
+        the count collation (which is the technique used in gensim). This technique identifies common words that
+        always occurs together with a minimum predefined frequency or according to gensim; threshold score, where
+        the higher the threshold value, the stricter the selection process.
+
+    </p>
+
+    <p>
+        This model is used to identify phrases (bigrams) that are present in your texts, and is especially useful
+        in building word vectors. Because it substantially reduce the computational complexity by reducing the
+        number of vocabularies in your word vector, it does this by combining words that occurs together
+        frequently into a single word.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="kn">import</span> <span class="nn">re</span>
+        <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+        <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span>
+        <span class="kn">from</span> <span class="nn">gensim</span> <span class="kn">import</span> <span class="n">utils</span>
+        <span class="kn">from</span> <span class="nn">gensim.models.phrases</span> <span class="kn">import</span> <span class="n">Phrases</span><span class="p">,</span> <span class="n">ENGLISH_CONNECTOR_WORDS</span>
+        <span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">NLTKWordTokenizer</span><span class="p">,</span> <span class="n">PunktSentenceTokenizer</span>
+        </pre></div>
+
+    </article>
+
+    <p class="block_text_code">
+        This model is trained on the whole series of the Malazan Book of the Fallen , not only is it an excellent
+        resources to train your model, it is also a much more excellent read, or it can be any [or all] books that
+        are presently in your computer. The books should be in [or converted to] the .txt format for easy loading,
+        and they should all be in a folder called the Books with no subfolder containing any more text files.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="k">class</span> <span class="nc">CustomPathLineSentences</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Custom implementaion of gensim.models.word2vec.PathLineSentences</span>
+
+        <span class="sd">    It differs from gensim implementation in that it replaces the default tokenizer</span>
+        <span class="sd">    with a more powerful tokenizer, while also adding more functionalities to it.</span>
+
+        <span class="sd">    Functionalities</span>
+        <span class="sd">    1) Break the block of text into sentences using PunktSentenceTokenizer() as each</span>
+        <span class="sd">    text is split on \n</span>
+
+        <span class="sd">    2) For each sentence</span>
+        <span class="sd">        a) Tokenize sentence using NLTKWordTokenizer()</span>
+        <span class="sd">            i) Clean each tokens</span>
+        <span class="sd">        b) Join words that constitute phrases into a single word if a phrase detector</span>
+        <span class="sd">        model is passed as argument</span>
+
+        <span class="sd">        c) yield up the preprocessed tokens for further processing</span>
+
+        <span class="sd">    Parameters</span>
+
+        <span class="sd">    source: str</span>
+        <span class="sd">        File path of the folder containing the text file</span>
+        <span class="sd">    limit: int</span>
+        <span class="sd">        The maximum number of characters to read in each text block</span>
+        <span class="sd">    include_phrase: bool</span>
+        <span class="sd">        If True group words that constitue phrase into a single word, this should only</span>
+        <span class="sd">        be set to True if a phrase detector model has been trained</span>
+        <span class="sd">    phrase_model: phrase detector model</span>
+        <span class="sd">        The model used in detecting phrases in text if include_phrase is True and phrase_model</span>
+        <span class="sd">        is None, a ValueError is raised.</span>
+        <span class="sd">    &quot;&quot;&quot;</span>
+
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_phrase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">phrase_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">include_phrase</span> <span class="o">=</span> <span class="n">include_phrase</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">word_tokenizer</span> <span class="o">=</span> <span class="n">NLTKWordTokenizer</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sentence_tokenizer</span> <span class="o">=</span> <span class="n">PunktSentenceTokenizer</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_phrase</span> <span class="ow">and</span> <span class="n">phrase_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">phrase_model</span> <span class="o">=</span> <span class="n">phrase_model</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_phrase</span> <span class="ow">and</span> <span class="n">phrase_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;phrase model detector not provided&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This is a file, use a folder next time&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">+</span> <span class="n">fname</span> <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input is neither a file or a directory&#39;</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">__word_cleaner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">cleaned_word_tokens</span><span class="p">,</span> <span class="n">punctuation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                <span class="sd">&quot;&quot;&quot;For each word if any punctuation is still found in the beginning and ending,</span>
+        <span class="sd">        further split them, ignore any punctuation found in between the alphabet</span>
+
+        <span class="sd">        &quot;&quot;&quot;</span>
+                <span class="n">beginning_punc</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">ending_punc</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">punctuation</span><span class="p">:</span>
+                        <span class="n">beginning_punc</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">punctuation</span><span class="p">:</span>
+                        <span class="n">ending_punc</span> <span class="o">=</span> <span class="n">word</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">beginning_punc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">cleaned_word_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beginning_punc</span><span class="p">)</span>
+
+                <span class="n">cleaned_word_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ending_punc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">cleaned_word_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ending_punc</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">cleaned_word_tokens</span>
+
+            <span class="k">def</span> <span class="nf">clean_token_words</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+                <span class="sd">&quot;&quot;&quot;Split a sentence into tokens for further preprocessing&quot;&quot;&quot;</span>
+                <span class="n">word_tokens</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">cleaned_word_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">punctuation</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span> <span class="o">+</span> <span class="s2">&quot;’&quot;</span> <span class="o">+</span> <span class="s2">&quot;‘&quot;</span>
+
+                <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_tokens</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_phrase</span><span class="p">:</span>
+                        <span class="n">cleaned_word_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">punctuation</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__word_cleaner</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">cleaned_word_tokens</span><span class="p">,</span> <span class="n">punctuation</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">cleaned_word_tokens</span>
+
+            <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Iterate through the files&quot;&quot;&quot;</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[‘’]&quot;</span><span class="p">)</span>
+
+                <span class="n">total_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">utils</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+                        <span class="c1"># iterate through the text using the inbuilt</span>
+                        <span class="c1"># readline function</span>
+                        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">islice</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">):</span>
+                            <span class="n">line</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">to_unicode</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+                                <span class="c1"># text broken at the line break point may contain</span>
+                                <span class="c1"># many sentences in it, use a sentence segmenter</span>
+                                <span class="c1"># to further break them into sentences</span>
+                                <span class="n">sentences</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentence_tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+                                <span class="c1"># for each of those sentences break them into tokens</span>
+                                <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+                                    <span class="n">sentence</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+                                    <span class="n">word_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_token_words</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+
+                                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_phrase</span><span class="p">:</span>
+                                        <span class="k">yield</span> <span class="n">word_tokens</span>
+                                    <span class="k">else</span><span class="p">:</span>
+                                        <span class="c1"># combine detected words that consitutes phrases</span>
+                                        <span class="c1"># into a single word</span>
+                                        <span class="n">generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phrase_model</span><span class="o">.</span><span class="n">analyze_sentence</span><span class="p">(</span><span class="n">word_tokens</span><span class="p">)</span>
+                                        <span class="k">yield</span> <span class="p">[</span><span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">generator</span><span class="p">]</span>
+
+            <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">counts</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">sentences</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">():</span>
+                    <span class="n">counts</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">return</span> <span class="n">counts</span>
+        </pre></div>
+
+    </article>
+
+    <p class="block_text_code">
+        Ok, that was fun, you just created and added a handy tool to your tools belt, it will be useful to us
+        in several scenarios [especially when building a word vector or a style inference model], so save it
+        somewhere in a python text file in the same directory and name the file utils.py, we are going to make
+        use of it soon.
+    </p>
+
+    <p class="quotation-danger block_text">
+        I cheated a little, I built the CustomPathLineSentences function to be generic and have many use cases
+        not specific to only this project, as you will see when I use it in building a
+        <a href="{% url 'data-analysis' 'how-to-build-a-special-case-word-vectors' %}" target="_blank">word vector</a>
+        and training a <a href="{% url 'data-analysis' 'how-to-build-a-generative-style-inference-model' %}" target="_blank">
+        style inference model</a>.
+    </p>
+
+    <p class="block_text">
+        What this class performs in summary is that, it become an iterator for us when instantiated, iterating
+        through our text files and preprocessing it for us at the same time, leaving to us the more difficult
+        task of training a phrase detector model. Which we are going to do below;
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="n">threshold</span> <span class="o">=</span> <span class="mi">400</span>
+        <span class="n">reduce_model_memory_size</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">phrase_model</span><span class="p">,</span> <span class="n">sentences_iterator</span> <span class="o">=</span> <span class="n">train_phrase_detector</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                                                                 <span class="n">reduce_model_memory_size</span><span class="o">=</span><span class="n">reduce_model_memory_size</span><span class="p">)</span>
+
+        <span class="c1"># saving the trained model</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;malaz_phrase_detector&quot;</span>
+        <span class="n">phrase_model</span> <span class="o">=</span> <span class="n">phrase_model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        </pre></div>
+    </article>
+
+    <p class="block_text_code">
+        Good we have finished training the model and saving it to disk for further use when we need to build
+        a word vector and a style inference model, Let see what the model learned and test to see if it can
+        detect word phrases in texts.
+    </p>
+
+    <article class="code_content">
+        <div class="highlight"><pre><span></span><span class="c1">##</span>
+
+        <span class="c1"># print how many phrases the model detected in the trainng text</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of phrases (bigrams) detected: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">phrase_model</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The Foolish Dog Clan will join your companies on the other side, Coltaine said. </span>
+        <span class="s2">You and the Weasel Clan shall guard this side while the wounded and the refugees cross&quot;&quot;&quot;</span>
+
+        <span class="c1"># preprocess the text in the same way the training</span>
+        <span class="c1"># text was preprocessed</span>
+        <span class="n">text_cleaned</span> <span class="o">=</span> <span class="n">sentences_iterator</span><span class="o">.</span><span class="n">clean_token_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="c1"># detect phrases (bigrams) in text</span>
+        <span class="n">phrases_detected</span> <span class="o">=</span> <span class="n">phrase_model</span><span class="o">.</span><span class="n">analyze_sentence</span><span class="p">(</span><span class="n">text_cleaned</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Detected phrases&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">phrases_detected</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        </pre></div>
+
+    </article>
+
+    <p class="block_text_code">
+        We have successfully built a phrase detector model, and the model have been tested on a text and it was
+        able to successfully detects the phrases in the model.
+    </p>
+
+    <p class="block_text quotation-danger">
+        This is important, this model can be general enough to detects phrases that follows the pattern of the
+        training text [for example, the next series of an author novel if the model has been trained on the
+        previous series]. But if the model is made to detect phrases on a completely different pattern of text,
+        that does not even contain the same vocabulary as the training text, the model will fail woefully.
+    </p>
+
+    <p class="block_text">
+    God Loves You!
+    </p>
+
+
+{% endblock %}

@@ -1,0 +1,975 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="{% static 'assets/images/icon.png' %}" rel="shortcut icon" type="image/x-icon">
+    <link href="{% static 'assets/images/icon.png' %}" rel="apple-touch-icon">
+    <title>{{ WEBSITE_NAME }}</title>
+
+    <!-- ========== All CSS files linkup ========= -->
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/lineicons.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/materialdesignicons.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/fullcalendar.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/fullcalendar.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/dress_code/css/main.css' %}" />
+  </head>
+  <body>
+    <!-- ======== sidebar-nav start =========== -->
+    <aside class="sidebar-nav-wrapper">
+      <div class="navbar-logo">
+        <a href="{% url 'dress-code:homepage' %}">
+            <img src="{% static 'assets/images/logo_small.png' %}" alt="senai logo">
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item">
+            <a href="{% url 'dress-code:homepage' %}">
+              <span class="icon">
+                <svg width="22" height="22" viewBox="0 0 22 22">
+                  <path
+                    d="M17.4167 4.58333V6.41667H13.75V4.58333H17.4167ZM8.25 4.58333V10.0833H4.58333V4.58333H8.25ZM17.4167 11.9167V17.4167H13.75V11.9167H17.4167ZM8.25 15.5833V17.4167H4.58333V15.5833H8.25ZM19.25 2.75H11.9167V8.25H19.25V2.75ZM10.0833 2.75H2.75V11.9167H10.0833V2.75ZM19.25 10.0833H11.9167V19.25H19.25V10.0833ZM10.0833 13.75H2.75V19.25H10.0833V13.75Z"
+                  />
+                </svg>
+              </span>
+              <span class="text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'dress-code:data-collection' %}">
+              <span class="icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12.9067 14.2908L15.2808 11.9167H6.41667V10.0833H15.2808L12.9067 7.70917L14.2083 6.41667L18.7917 11L14.2083 15.5833L12.9067 14.2908ZM17.4167 2.75C17.9029 2.75 18.3692 2.94315 18.713 3.28697C19.0568 3.63079 19.25 4.0971 19.25 4.58333V8.86417L17.4167 7.03083V4.58333H4.58333V17.4167H17.4167V14.9692L19.25 13.1358V17.4167C19.25 17.9029 19.0568 18.3692 18.713 18.713C18.3692 19.0568 17.9029 19.25 17.4167 19.25H4.58333C3.56583 19.25 2.75 18.425 2.75 17.4167V4.58333C2.75 3.56583 3.56583 2.75 4.58333 2.75H17.4167Z"
+                  />
+                </svg>
+              </span>
+              <span class="text">Data Center</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{% url 'dress-code:analyze-image' %}">
+              <span class="icon">
+                <svg width="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M17.1801 4.41C17.1801 3.08 18.2601 2 19.5901 2C20.9201 2 22.0001 3.08 22.0001 4.41C22.0001 5.74 20.9201 6.82 19.5901 6.82C18.2601 6.82 17.1801 5.74 17.1801 4.41ZM13.33 14.7593L16.22 11.0303L16.18 11.0503C16.34 10.8303 16.37 10.5503 16.26 10.3003C16.151 10.0503 15.91 9.8803 15.651 9.8603C15.38 9.8303 15.111 9.9503 14.95 10.1703L12.531 13.3003L9.76 11.1203C9.59 10.9903 9.39 10.9393 9.19 10.9603C8.991 10.9903 8.811 11.0993 8.69 11.2593L5.731 15.1103L5.67 15.2003C5.5 15.5193 5.58 15.9293 5.88 16.1503C6.02 16.2403 6.17 16.3003 6.34 16.3003C6.571 16.3103 6.79 16.1893 6.93 16.0003L9.44 12.7693L12.29 14.9103L12.38 14.9693C12.7 15.1393 13.1 15.0603 13.33 14.7593ZM15.45 3.7803C15.41 4.0303 15.39 4.2803 15.39 4.5303C15.39 6.7803 17.21 8.5993 19.45 8.5993C19.7 8.5993 19.94 8.5703 20.19 8.5303V16.5993C20.19 19.9903 18.19 22.0003 14.79 22.0003H7.401C4 22.0003 2 19.9903 2 16.5993V9.2003C2 5.8003 4 3.7803 7.401 3.7803H15.45Z" fill="currentColor"></path>
+                </svg>
+              </span>
+              <span class="text">Analyze Image</span>
+            </a>
+          </li>
+
+          <span class="divider"><hr /></span>
+
+          <li class="nav-item">
+            <a href="{% url 'dress-code:about' %}">
+              <span class="icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9.16667 19.25H12.8333C12.8333 20.2584 12.0083 21.0834 11 21.0834C9.99167 21.0834 9.16667 20.2584 9.16667 19.25ZM19.25 17.4167V18.3334H2.75V17.4167L4.58333 15.5834V10.0834C4.58333 7.24171 6.41667 4.76671 9.16667 3.94171V3.66671C9.16667 2.65837 9.99167 1.83337 11 1.83337C12.0083 1.83337 12.8333 2.65837 12.8333 3.66671V3.94171C15.5833 4.76671 17.4167 7.24171 17.4167 10.0834V15.5834L19.25 17.4167ZM15.5833 10.0834C15.5833 7.51671 13.5667 5.50004 11 5.50004C8.43333 5.50004 6.41667 7.51671 6.41667 10.0834V16.5H15.5833V10.0834Z"
+                  />
+                </svg>
+              </span>
+              <span class="text">About Us</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="promo-box">
+        <h3>SENAI</h3>
+        <p>{{ MOTTO }}</p>
+        <a
+          href="{% url 'senai' %}"
+          target="_blank"
+          class="main-btn primary-btn btn-hover"
+        >
+          Visit us
+        </a>
+      </div>
+    </aside>
+    <div class="overlay"></div>
+    <!-- ======== sidebar-nav end =========== -->
+
+    <!-- ======== main-wrapper start =========== -->
+    <main class="main-wrapper">
+      <!-- ========== header start ========== -->
+      <header class="header">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-lg-5 col-md-5 col-6">
+              <div class="header-left d-flex align-items-center">
+                <div class="menu-toggle-btn mr-20">
+                  <button
+                    id="menu-toggle"
+                    class="main-btn primary-btn btn-hover"
+                  >
+                    <i class="lni lni-chevron-left me-2"></i> Menu
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7 col-md-7 col-6">
+              <div class="header-right">
+
+                <!-- profile start -->
+                {% if user.is_authenticated %}
+                    <div class="profile-box ml-15">
+                      <button
+                        class="dropdown-toggle bg-transparent border-0"
+                        type="button"
+                        id="profile"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <div class="profile-info">
+                            <div class="info">
+                                <h6>{{ user.username }}</h6>
+                          </div>
+                        </div>
+                        <i class="lni lni-chevron-down"></i>
+                      </button>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="profile"
+                      >
+                        <li>
+                          <a href="{% url 'dress-code:logout' %}"> <i class="lni lni-exit"></i> Sign Out </a>
+                        </li>
+                      </ul>
+                    </div>
+                {% else %}
+                    <div class="profile-box ml-15">
+                      <button
+                        class="dropdown-toggle bg-transparent border-0"
+                        type="button"
+                        id="profile"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <div class="profile-info">
+                            <div class="info">
+                                <h6>Hello Guest</h6>
+                          </div>
+                        </div>
+                        <i class="lni lni-chevron-down"></i>
+                      </button>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="profile"
+                      >
+                        <li>
+                          <a href="{% url 'dress-code:register' %}"> <i class="lni lni-enter"></i> Sign up </a>
+                        </li>
+                      </ul>
+                    </div>
+
+                {% endif %}
+                <!-- profile end -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- ========== header end ========== -->
+
+      {% block content %}
+      <!-- ========== section start ========== -->
+      <section class="section">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title mb-30">
+                    {% if user.first_name == 'Male' %}
+                        <h2>Hi Monsieur!</h2>
+                    {% endif  %}
+                    {% if user.first_name == 'Female' %}
+                        <h2>Hi Mademoiselle!</h2>
+                    {% endif %}
+                    {% if user.first_name == 'Other' %}
+                        <h2>Hi!</h2>
+                    {% endif %}
+                  <h2></h2>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="{% url 'senai' %}">Senai</a>
+                      </li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Dashboard
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+          <div class="row">
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+              <div class="icon-card mb-30">
+                <div class="icon purple">
+                  <i class="lni lni-user"></i>
+                </div>
+                <div class="content">
+                  <h6 class="mb-10">Sex: Male</h6>
+                  <h3 class="text-bold mb-10">{{ male_sex }}</h3>
+                </div>
+              </div>
+              <!-- End Icon Cart -->
+            </div>
+            <!-- End Col -->
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+              <div class="icon-card mb-30">
+                <div class="icon success">
+                  <i class="lni lni-user"></i>
+                </div>
+                <div class="content">
+                  <h6 class="mb-10">Sex: Female</h6>
+                  <h3 class="text-bold mb-10">{{ female_sex }}</h3>
+                </div>
+              </div>
+              <!-- End Icon Cart -->
+            </div>
+            <!-- End Col -->
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+              <div class="icon-card mb-30">
+                <div class="icon primary">
+                  <i class="lni lni-credit-cards"></i>
+                </div>
+                <div class="content">
+                  <h6 class="mb-10">Proper Clothing</h6>
+                  <h3 class="text-bold mb-10">{{ proper_category_count }}</h3>
+                </div>
+              </div>
+              <!-- End Icon Cart -->
+            </div>
+            <!-- End Col -->
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+              <div class="icon-card mb-30">
+                <div class="icon orange">
+                  <i class="lni lni-user"></i>
+                </div>
+                <div class="content">
+                  <h6 class="mb-10">Improper Clothing</h6>
+                  <h3 class="text-bold mb-10">{{ improper_category_count }}</h3>
+                </div>
+              </div>
+              <!-- End Icon Cart -->
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+          <div class="row">
+            <div class="col-lg-7">
+              <div class="card-style mb-30">
+                <div class="title d-flex flex-wrap justify-content-between">
+                  <div class="left">
+                      <h3 class="text-bold">Category</h3>
+                  </div>
+                  <div class="right">
+                    <p>Weekly</p>
+                    <!-- end select -->
+                  </div>
+                </div>
+                <!-- End Title -->
+                <div class="chart">
+                  <canvas
+                    id="Chart1"
+                    style="width: 100%; height: 400px"
+                  ></canvas>
+                </div>
+                <!-- End Chart -->
+              </div>
+            </div>
+            <!-- End Col -->
+            <div class="col-lg-5">
+              <div class="card-style mb-30">
+                <div
+                  class="
+                    title
+                    d-flex
+                    flex-wrap
+                    align-items-center
+                    justify-content-between
+                  "
+                >
+                  <div class="left">
+                    <h6 class="text-medium mb-30">Category</h6>
+                  </div>
+                </div>
+                <!-- End Title -->
+                <div class="chart">
+                  <canvas
+                    id="Chart4"
+                    style="width: 100%; height: 400px"
+                  ></canvas>
+                </div>
+                <!-- End Chart -->
+              </div>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+          <div class="row">
+            <div class="col-lg-7">
+              <div class="card-style mb-30">
+                <div
+                  class="
+                    title
+                    d-flex
+                    flex-wrap
+                    align-items-center
+                    justify-content-between
+                  "
+                >
+                  <div class="left">
+                    <h6 class="text-medium mb-2">Personal Images Uploaded</h6>
+                  </div>
+                </div>
+                <!-- End Title -->
+                <div class="chart">
+                  <canvas
+                    id="Chart3"
+                    style="width: 100%; height: 450px"
+                  ></canvas>
+                </div>
+              </div>
+            </div>
+            <!-- End Col -->
+            <div class="col-lg-5">
+              <div class="card-style mb-30">
+                <div
+                  class="
+                    title
+                    d-flex
+                    flex-wrap
+                    align-items-center
+                    justify-content-between
+                  "
+                >
+                  <div class="left">
+                    <h6 class="text-medium mb-2">Category</h6>
+                    <h2 class="text-bold">Sex</h2>
+                  </div>
+                </div>
+                <!-- End Title -->
+                <div class="chart">
+                  <canvas
+                    id="Chart2"
+                    style="width: 100%; height: 420px"
+                  ></canvas>
+                </div>
+                <!-- End Chart -->
+              </div>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card-style mb-30">
+                  <h2>Minimum of Number of Images Needed: <span title="Current global count">{{ total }} </span> / <span title="Required count">100,000</span></h2>
+              </div>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== section end ========== -->
+      {% endblock content %}
+
+      <!-- ========== footer start =========== -->
+      <footer class="footer">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6 order-last order-md-first">
+              <div class="copyright text-center text-md-start">
+                <p class="text-sm">
+                  Developed by
+                  <a
+                    href="{% url 'senai' %}"
+                    target="_blank"
+                  >
+                    SENAI
+                  </a>
+                </p>
+              </div>
+            </div>
+            <!-- end col-->
+            <div class="col-md-6">
+              <div
+                class="
+                  terms
+                  d-flex
+                  justify-content-center justify-content-md-end
+                "
+              >
+                <a href="#0" class="text-sm ml-15" data-bs-toggle="modal" data-bs-target="#exampleModalCenteredScrollable2">Privacy & Policy</a>
+              </div>
+
+            </div>
+          </div>
+          <!-- end row -->
+        </div>
+        <!-- end container -->
+      </footer>
+      <!-- ========== footer end =========== -->
+    </main>
+    <!-- ======== main-wrapper end =========== -->
+    <div class="modal fade" id="exampleModalCenteredScrollable2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLiveLabel">Privacy & Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    This privacy policy outlines how we collect, use, protect, and disclose personal information
+                    obtained from users of our student project, which monitors dressing using image recognition technology.
+                </p><br>
+                <h5>
+                <h4>Collection of Information:</h4>
+                <p>
+                    We collect personal information, such as images and clothing descriptions, from users who voluntarily
+                    participate in our data collection process. We may also obtain personal information through third-party
+                    sources, including social media platforms.
+                </p><br>
+
+                <h4>Use of Information:</h4>
+                <p>
+                    The personal information we collect will be used to develop our image recognition technology and to improve
+                    our project. We may also use this information to contact participants for research purposes, to send newsletters
+                    or other information, or to solicit donations or financial assistance.
+                </p><br>
+
+                <h4>Protection of Information:</h4>
+                <p>
+                    We are committed to protecting the personal information of our users. We use reasonable and appropriate technical,
+                    administrative, and physical security measures to safeguard against unauthorized access, disclosure, alteration,
+                    or destruction of personal information.
+                </p><br>
+
+                <h4>Disclosure of Information:</h4>
+                <p>
+                    We will not disclose personal information collected from users to any third party without consent, except as
+                    required by law or legal process, to protect our rights or property, or in the event of a merger, acquisition,
+                    or sale of our assets.
+                </p><br>
+
+                <h4>Donations and Financial Assistance:</h4>
+
+                <p>
+                    We welcome donations and financial assistance to support our project. If you choose to donate,
+                    we will collect personal information necessary to process the donation, including your name,
+                    address, and payment information. We will use this information only for the purpose of processing
+                    the donation.
+                </p><br>
+
+                <h4>Changes to Privacy Policy:</h4>
+                <p>
+                    We reserve the right to change this privacy policy at any time. If we make material changes to this
+                    policy, we will notify users by posting a notice on our website.
+                </p><br>
+
+                <h4>Contact Us:</h4>
+                <p>
+                    If you have any questions or concerns regarding our privacy policy, please contact us at
+                    <a href="mailto:senai.nkop@gmail.com">senai.nkop@gmail.com </a>
+                </p><br>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
+            </div>
+            </div>
+        </div>
+      </div>
+
+
+    <!-- ========= All Javascript files linkup ======== -->
+    <script src="{% static 'assets/dress_code/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/Chart.min.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/dynamic-pie-chart.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/moment.min.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/jvectormap.min.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/world-merc.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/polyfill.js' %}"></script>
+    <script src="{% static 'assets/dress_code/js/sub_main.js' %}"></script>
+
+    {% block javascript %}
+        <script>
+          // ======== jvectormap activation
+          var markers = [
+            { name: "Egypt", coords: [26.8206, 30.8025] },
+            { name: "Russia", coords: [61.524, 105.3188] },
+            { name: "Canada", coords: [56.1304, -106.3468] },
+            { name: "Greenland", coords: [71.7069, -42.6043] },
+            { name: "Brazil", coords: [-14.235, -51.9253] },
+          ];
+
+          var jvm = new jsVectorMap({
+            map: "world_merc",
+            selector: "#map",
+            zoomButtons: true,
+
+            regionStyle: {
+              initial: {
+                fill: "#d1d5db",
+              },
+            },
+
+            labels: {
+              markers: {
+                render: (marker) => marker.name,
+              },
+            },
+
+            markersSelectable: true,
+            selectedMarkers: markers.map((marker, index) => {
+              var name = marker.name;
+
+              if (name === "Russia" || name === "Brazil") {
+                return index;
+              }
+            }),
+            markers: markers,
+            markerStyle: {
+              initial: { fill: "#4A6CF7" },
+              selected: { fill: "#ff5050" },
+            },
+            markerLabelStyle: {
+              initial: {
+                fontWeight: 400,
+                fontSize: 14,
+              },
+            },
+          });
+          // ====== calendar activation
+          document.addEventListener("DOMContentLoaded", function () {
+            var calendarMiniEl = document.getElementById("calendar-mini");
+            var calendarMini = new FullCalendar.Calendar(calendarMiniEl, {
+              initialView: "dayGridMonth",
+              headerToolbar: {
+                end: "today prev,next",
+              },
+            });
+            calendarMini.render();
+          });
+
+          // =========== chart one start
+          const ctx1 = document.getElementById("Chart1").getContext("2d");
+          const chart1 = new Chart(ctx1, {
+            // The type of chart we want to create
+            type: "line", // also try bar or other graph types
+
+            // The data for our dataset
+            data: {
+              labels: {{ unique_weekly_category }},
+              // Information about the dataset
+              datasets: [
+                {
+                  label: "Proper Dress code",
+                  backgroundColor: "transparent",
+                  borderColor: "#4A6CF7",
+                  data: {{ proper_count_weekly }},
+                  pointBackgroundColor: "transparent",
+                  pointHoverBackgroundColor: "#4A6CF7",
+                  pointBorderColor: "transparent",
+                  pointHoverBorderColor: "#fff",
+                  pointHoverBorderWidth: 5,
+                  pointBorderWidth: 5,
+                  pointRadius: 8,
+                  pointHoverRadius: 8,
+                },
+                {
+                  label: "Improper Dress code",
+                  backgroundColor: "transparent",
+                  borderColor: "#9b51e0",
+                  data: {{ improper_count_weekly }},
+                  pointBackgroundColor: "transparent",
+                  pointHoverBackgroundColor: "#9b51e0",
+                  pointBorderColor: "transparent",
+                  pointHoverBorderColor: "#fff",
+                  pointHoverBorderWidth: 3,
+                  pointBorderWidth: 5,
+                  pointRadius: 5,
+                  pointHoverRadius: 8,
+                },
+
+              ],
+            },
+
+            // Configuration options
+            defaultFontFamily: "Inter",
+            options: {
+              tooltips: {
+                callbacks: {
+                  labelColor: function (tooltipItem, chart) {
+                    return {
+                      backgroundColor: "#ffffff",
+                    };
+                  },
+                },
+                intersect: false,
+                backgroundColor: "#f9f9f9",
+                titleFontFamily: "Inter",
+                titleFontColor: "#8F92A1",
+                titleFontSize: 12,
+                bodyFontFamily: "Inter",
+                bodyFontColor: "#171717",
+                bodyFontStyle: "bold",
+                bodyFontSize: 16,
+                multiKeyBackground: "transparent",
+                displayColors: false,
+                xPadding: 30,
+                yPadding: 10,
+                bodyAlign: "center",
+                titleAlign: "center",
+              },
+
+              title: {
+                display: false,
+              },
+              legend: {
+                display: false,
+              },
+
+              scales: {
+                yAxes: [
+                  {
+                    gridLines: {
+                      display: false,
+                      drawTicks: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      padding: 35,
+                      max: {{ arg_max_category_weekly }} > 50? {{ arg_max_category_weekly }} + 20: 50,
+                      min: 0,
+                    },
+                  },
+                ],
+                xAxes: [
+                  {
+                    gridLines: {
+                      drawBorder: false,
+                      color: "rgba(143, 146, 161, .1)",
+                      zeroLineColor: "rgba(143, 146, 161, .1)",
+                    },
+                    ticks: {
+                      padding: 20,
+                    },
+                  },
+                ],
+              },
+            },
+          });
+
+          // =========== chart one end
+
+          // =========== chart two start
+          const ctx2 = document.getElementById("Chart2").getContext("2d");
+          const chart2 = new Chart(ctx2, {
+            // The type of chart we want to create
+            type: "bar", // also try bar or other graph types
+            // The data for our dataset
+            data: {
+              labels: ["Male", "Female", "Others"],
+              // Information about the dataset
+              datasets: [
+                {
+                  label: "Proper",
+                  backgroundColor: "#4A6CF7",
+                  barThickness: 25,
+                  maxBarThickness: 30 ,
+                  data: {{ sex_proper }},
+                },
+                {
+                  label: "Improper",
+                  backgroundColor: "#d50100",
+                  barThickness: 25,
+                  maxBarThickness: 30,
+                  data: {{ sex_improper }},
+                },
+              ],
+            },
+            // Configuration options
+            options: {
+              borderColor: "#F3F6F8",
+              borderWidth: 15,
+              backgroundColor: "#F3F6F8",
+              tooltips: {
+                callbacks: {
+                  labelColor: function (tooltipItem, chart) {
+                    return {
+                      backgroundColor: "rgba(104, 110, 255, .0)",
+                    };
+                  },
+                },
+                backgroundColor: "#F3F6F8",
+                titleFontColor: "#8F92A1",
+                titleFontSize: 12,
+                bodyFontColor: "#171717",
+                bodyFontStyle: "bold",
+                bodyFontSize: 16,
+                multiKeyBackground: "transparent",
+                displayColors: false,
+                xPadding: 30,
+                yPadding: 10,
+                bodyAlign: "center",
+                titleAlign: "center",
+              },
+
+              title: {
+                display: false,
+              },
+              legend: {
+                display: true,
+              },
+
+              scales: {
+                yAxes: [
+                  {
+                    gridLines: {
+                      display: false,
+                      drawTicks: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      padding: 35,
+                      max: {{ arg_max_sex_and_category }} > 40? {{ arg_max_sex_and_category }} + 20: 40,
+                      min: 0,
+                    },
+                  },
+                ],
+                xAxes: [
+                  {
+                    gridLines: {
+                      display: false,
+                      drawBorder: false,
+                      color: "rgba(143, 146, 161, .1)",
+                      zeroLineColor: "rgba(143, 146, 161, .1)",
+                    },
+                    ticks: {
+                      padding: 20,
+                    },
+                  },
+                ],
+              },
+            },
+          });
+          // =========== chart two end
+
+          // =========== chart three start
+          const ctx3 = document.getElementById("Chart3").getContext("2d");
+          const chart3 = new Chart(ctx3, {
+            // The type of chart we want to create
+            type: "line", // also try bar or other graph types
+
+            // The data for our dataset
+            data: {
+              labels: {{ user_unique_weekly }},
+              // Information about the dataset
+              datasets: [
+                {
+                  label: "",
+                  backgroundColor: "transparent",
+                  borderColor: "#9b51e0",
+                  data: {{ user_count_weekly }},
+                  pointBackgroundColor: "transparent",
+                  pointHoverBackgroundColor: "#9b51e0",
+                  pointBorderColor: "transparent",
+                  pointHoverBorderColor: "#fff",
+                  pointHoverBorderWidth: 3,
+                  pointBorderWidth: 5,
+                  pointRadius: 5,
+                  pointHoverRadius: 8,
+                },
+              ],
+            },
+
+            // Configuration options
+            options: {
+              tooltips: {
+                intersect: false,
+                backgroundColor: "#fbfbfb",
+                titleFontColor: "#8F92A1",
+                titleFontSize: 16,
+                titleFontFamily: "Inter",
+                titleFontStyle: "400",
+                bodyFontFamily: "Inter",
+                bodyFontColor: "#171717",
+                bodyFontSize: 16,
+                multiKeyBackground: "transparent",
+                displayColors: false,
+                xPadding: 30,
+                yPadding: 15,
+                borderColor: "rgba(143, 146, 161, .1)",
+                borderWidth: 1,
+                title: false,
+              },
+
+              title: {
+                display: false,
+              },
+
+              layout: {
+                padding: {
+                  top: 0,
+                },
+              },
+
+              legend: false,
+
+              scales: {
+                yAxes: [
+                  {
+                    gridLines: {
+                      display: false,
+                      drawTicks: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      padding: 35,
+                      max: {{ arg_max_user_count_weekly }} > 60? {{ arg_max_user_count_weekly }} + 30: 60,
+                      min: 0,
+                    },
+                  },
+                ],
+                xAxes: [
+                  {
+                    gridLines: {
+                      drawBorder: false,
+                      color: "rgba(143, 146, 161, .1)",
+                      zeroLineColor: "rgba(143, 146, 161, .1)",
+                    },
+                    ticks: {
+                      padding: 20,
+                    },
+                  },
+                ],
+              },
+            },
+          });
+          // =========== chart three end
+
+          // ================== chart four start
+          const ctx4 = document.getElementById("Chart4").getContext("2d");
+          const chart4 = new Chart(ctx4, {
+            // The type of chart we want to create
+            type: "bar", // also try bar or other graph types
+            // The data for our dataset
+            data: {
+              labels: ["Proper", "Improper"],
+              // Information about the dataset
+              datasets: [
+                {
+                  label: "",
+                  backgroundColor: "#4A6CF7",
+                  barThickness: 80,
+                  maxBarThickness: 85,
+                  data: {{ category_total }},
+                },
+
+              ],
+            },
+            // Configuration options
+            options: {
+              borderColor: "#F3F6F8",
+              borderWidth: 15,
+              backgroundColor: "#F3F6F8",
+              tooltips: {
+                callbacks: {
+                  labelColor: function (tooltipItem, chart) {
+                    return {
+                      backgroundColor: "rgba(104, 110, 255, .0)",
+                    };
+                  },
+                },
+                backgroundColor: "#F3F6F8",
+                titleFontColor: "#8F92A1",
+                titleFontSize: 12,
+                bodyFontColor: "#171717",
+                bodyFontStyle: "bold",
+                bodyFontSize: 16,
+                multiKeyBackground: "transparent",
+                displayColors: false,
+                xPadding: 30,
+                yPadding: 10,
+                bodyAlign: "center",
+                titleAlign: "center",
+              },
+
+              title: {
+                display: false,
+              },
+              legend: {
+                display: false,
+              },
+
+              scales: {
+                yAxes: [
+                  {
+                    gridLines: {
+                      display: false,
+                      drawTicks: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      padding: 35,
+                      max: {{ arg_max_category_total }} > 50? {{ arg_max_category_total }} + 20: 50,
+                      min: 0,
+                    },
+                  },
+                ],
+                xAxes: [
+                  {
+                    gridLines: {
+                      display: false,
+                      drawBorder: false,
+                      color: "rgba(143, 146, 161, .1)",
+                      zeroLineColor: "rgba(143, 146, 161, .1)",
+                    },
+                    ticks: {
+                      padding: 20,
+                    },
+                  },
+                ],
+              },
+            },
+          });
+          // =========== chart four end
+        </script>
+    {% endblock javascript %}
+  </body>
+</html>

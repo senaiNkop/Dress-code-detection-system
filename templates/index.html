@@ -1,0 +1,474 @@
+{% load static %}
+{% load extra_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>{{ company_name }}</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/images/icon.png' %}" rel="icon">
+  <link href="{% static 'assets/images/icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/portfolio/style.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/css/portfolio/site_wide.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top d-flex align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
+
+{#      <h1 class="logo"><a href="{% url 'senai' %}">Senai</a></h1>#}
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <a href="{% url 'senai' %}" class="logo"><img src="{% static 'assets/images/logo.png' %}" alt="" class="img-fluid"></a>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto" href="#about">About</a></li>
+          <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
+          <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
+          <li><a class="getstarted scrollto" href="#about">Get Started</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero">
+    <div class="hero-container">
+      <div id="heroCarousel" data-bs-interval="5000" class="carousel slide carousel-fade" data-bs-ride="carousel">
+
+        <ol class="carousel-indicators" id="hero-carousel-indicators"></ol>
+
+        <div class="carousel-inner" role="listbox">
+
+          <!-- Slide 1 -->
+          <div class="carousel-item active" style="background-image: url({% static 'assets/images/portfolio/slide/slide-growth-1.webp' %});">
+            <div class="carousel-container">
+              <div class="carousel-content">
+                <h2 class="animate__animated animate__fadeInDown">Grow Your Business</h2>
+                <p class="animate__animated animate__fadeInUp">
+                    Maxismise your business potential and say ahead of your competition with our Data
+                    Science services by making sense of your data to get insights that help you make
+                    better decisions and also build specialized chatbots to answer every customer request
+                    24/7 on social media platforms.
+                </p>
+                <div>
+                  <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="carousel-item" style="background-image: url({% static 'assets/images/portfolio/slide/slide-efficient-1.webp' %});">
+            <div class="carousel-container">
+              <div class="carousel-content">
+                <h2 class="animate__animated animate__fadeInDown">Build Efficient Websites</h2>
+                <p class="animate__animated animate__fadeInUp">
+                    Develop customized Backend solutions that keep our website running efficiently
+                    and securely (the technical stuff), leaving you to focus on what you do best
+                </p>
+                <div>
+                  <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="carousel-item" style="background-image: url({% static 'assets/images/portfolio/slide/slide-traffic-2.webp' %});">
+            <div class="carousel-container">
+              <div class="carousel-content">
+                <h2 class="animate__animated animate__fadeInDown">Increase Traffic to Your Websites</h2>
+                <p class="animate__animated animate__fadeInUp">
+                    You'll be surprised by how effective a well-written article can be in driving traffic
+                    and we provide high quality articles for technical subjects
+                </p>
+                <div>
+                  <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
+        </a>
+
+        <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
+          <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
+        </a>
+
+      </div>
+    </div>
+  </section><!-- End Hero -->
+
+  <main id="main">
+
+    <!-- ======= About Section ======= -->
+    <section id="about" class="about">
+      <div class="container">
+
+        <div class="row no-gutters">
+          <div class="image col-xl-5 d-flex align-items-stretch justify-content-center justify-content-lg-start"></div>
+          <div class="col-xl-7 ps-0 ps-lg-5 pe-lg-1 d-flex align-items-stretch">
+            <div class="content d-flex flex-column justify-content-center">
+              <h3>ABOUT US</h3>
+              <p>
+                  SENAI as an emerging AI start-up was founded with the aim of developing softwares, Bot and websites
+                  that are more efficient and interactive by integrating state of the art AI technologies into your
+                  applications, making them perform more efficiently and intelligently
+              </p><br>
+              <p>
+                  We make data-driven websites and make analysis on your datasets that you can trust to make
+                  profitable decisions. Also we build chatbot that can be easily integrated into your website
+                  and/or any social media platforms to improve your customer services
+              </p>
+              <div class="row">
+                <div class="col-md-6 icon-box">
+                  <i class="bx bx-shield"></i>
+                  <h4>Efficient & Secure</h4>
+                  <p>Build highly secured software efficiently</p>
+                </div>
+                <div class="col-md-6 icon-box">
+                  <i class="bx bx-run"></i>
+                  <h4>On Time Delivery</h4>
+                  <p>We ensure to deliver on time...except were security is at stake</p>
+                </div>
+                <div class="col-md-6 icon-box">
+                  <i class="bx bx-dollar-circle"></i>
+                  <h4>Integrity</h4>
+                  <p>Our integrity is our most valuable commodity</p>
+                </div>
+                <div class="col-md-6 icon-box">
+                  <i class="bx bx-chat"></i>
+                  <h4>Customized Chatbots</h4>
+                  <p>Create chatbots for website and social media platforms</p>
+                </div>
+              </div>
+            </div><!-- End .content-->
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End About Section -->
+
+    <!-- ======= Why Us Section ======= -->
+    <section id="why-us" class="why-us">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Why Us</h2>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-4">
+            <div class="box">
+              <span>01</span>
+              <h4>Data Science</h4>
+              <p>Transform your Business with actionable insights with our Data Science services.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="box">
+              <span>02</span>
+              <h4>Backend Development</h4>
+              <p>
+                  Develop your website with Django quickly and efficiently using the latest technology
+                  for state-of-the-art functionality
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="box">
+              <span>03</span>
+              <h4>Articles</h4>
+              <p>Quality article writing that boost your SEO and drives traffic to your website<br><br></p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Why Us Section -->
+
+    <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Portfolio</h2>
+          <p>
+              Check out the cool projects we have worked on!
+          </p>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 d-flex justify-content-center">
+            <ul id="portfolio-flters">
+              <li data-filter="*" class="filter-active">All</li>
+              <li data-filter=".filter-data_science">Data Science</li>
+              <li data-filter=".filter-backend">Backend</li>
+              <li data-filter=".filter-articles">Articles</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row portfolio-container">
+            {% for item in portfolio|ravel_zip %}
+                {% if item.category == 'Data Science' %}
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-data_science">
+                {% elif item.category == 'Article' %}
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-articles">
+                {% elif item.category == 'Backend' %}
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-backend">
+                {% endif %}
+                    <div class="portfolio-wrap">
+                    <img src="{{ item.thumbnail }}" class="img-fluid" width="800" height="600" alt="">
+                    <div class="portfolio-info">
+                    <h4>{{ item.title }}</h4>
+                    <p>{{ item.category }}</p>
+                    <div class="portfolio-links">
+                      <a href="{{ item.thumbnail }}" data-gallery="portfolioGallery" class="portfolio-lightbox" title="{{ item.title }}">
+                          <i class="bx bx-plus"></i>
+                      </a>
+                      <a href="{{ item.get_absolute_url }}" target="_blank" title="More Details"><i class="bx bx-link"></i></a>
+                    </div>
+                  </div>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+
+      </div>
+    </section><!-- End Portfolio Section -->
+
+    <!-- ======= Team Section ======= -->
+
+    <!-- ======= Pricing Section ======= -->
+
+    <!-- ======= Frequently Asked Questions Section ======= -->
+
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Contact</h2>
+        </div>
+
+        <div class="row contact-info">
+
+          <div class="col-md-4">
+            <div class="contact-address">
+              <i class="bi bi-geo-alt"></i>
+              <h3>Address</h3>
+              <address>{{ company_address }}</address>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="contact-phone">
+              <i class="bi bi-phone"></i>
+              <h3>Phone Number</h3>
+              <p><a href="tel:{{ company_number }}">+234 907 3720 587</a></p>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="contact-email">
+              <i class="bi bi-envelope"></i>
+              <h3>Email</h3>
+              <p><a href="mailto:{{ company_email }}">{{ company_email }}</a></p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form">
+          <form action="{% url 'send-email' %}" role="form" class="php-email-form">
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars">
+              </div>
+              <div class="col-md-6 form-group mt-3 mt-md-0">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" required>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
+            </div>
+            <div class="form-group mt-3">
+              <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+            </div>
+            <div class="my-3">
+              <div class="loading">Loading</div>
+              <div class="error-message"></div>
+              <div class="sent-message">Your message has been sent. Thank you!</div>
+            </div>
+            <div class="text-center"><button type="submit">Send Message</button></div>
+            {% csrf_token %}
+          </form>
+        </div>
+
+      </div>
+    </section><!-- End Contact Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-info">
+              <h3>SENAI</h3>
+              <p>
+                No 15 Itu Road <br>
+                Uyo, Nigeria <br><br>
+                <strong>Phone:</strong> +234 903 5018 948<br>
+                <strong>Email:</strong> {{ company_email }}<br>
+              </p>
+{#              <div class="social-links mt-3">#}
+{#                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>#}
+{#                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>#}
+{#                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>#}
+{#                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>#}
+{#                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>#}
+{#              </div>#}
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#hero">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#portfolio">Portfolio</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#about">About Us</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Our Services</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#portfolio">Data Science</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#portfolio">Backend Development</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#portfolio">Articles</a></li>
+              <li><i class="bx bx-chevron-right"><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalCenteredScrollable">Django Masterclass</a></i></li>
+              <li><i class="bx bx-chevron-right"></i> <a>Data Science Masterclass (Coming soon!)</a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+          {% include 'include/copyright.html' %}
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div class="modal fade" id="exampleModalCenteredScrollable" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Django Full Stack Masterclass</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <h6><b>Prerequisite:</b></h6>
+                  <ul>
+                      <li>Basic Knowledge of python</li>
+                  </ul>
+                  <br>
+                  <p>
+                      Welcome to Django Masterclass, in this course we are going to go into details
+                      of creating dynamic web application with django from scratch, and
+                      build real world projects as you learn and get a certificate on successful
+                      completion of the program.
+
+                      We will also teach you Front End technologies you'll need to know to be able
+                      to manipulate web pages on the Front End, which will include HTML, CSS, and
+                      Javascript. This course is one-stop for everything you will need to become a
+                      backend developer
+                  </p>
+
+                  <ol>
+                      <li>HTML5</li>
+                      <li>CSS3</li>
+                      <li>Javascript</li>
+                      <li>Django
+                          <ul>
+                              <li>Django Basics</li>
+                              <li>Django Views</li>
+                              <li>Django Template Language</li>
+                              <li>Django Forms, Model and ModelForm</li>
+                              <li>Django Admin and Admin customization</li>
+                              <li>Connecting to Database (Postgre, MySQL, etc)</li>
+                              <li>Django Class Based Views</li>
+                              <li>User Authentications</li>
+                              <li>Deployment</li>
+                          </ul>
+                      </li>
+                  </ol>
+                  <p>Register <a href="#">here</a> to begin your classes</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/portfolio/main.js' %}"></script>
+
+</body>
+
+</html>
